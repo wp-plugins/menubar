@@ -2,7 +2,7 @@
 Tags: dropdown, menu, navigation
 Requires at least: 2.3
 Tested up to: 2.7.1
-Stable tag: trunk
+Stable tag: 3.0
 
 Configurable menus with your choice of menu templates.
 
@@ -20,10 +20,10 @@ With the Menubar plugin you can:
 
 See the [First installation procedure](http://www.dontdream.it/wp-menubar-3-documentation#First%20installation%20procedure) or the [Upgrading procedure](http://www.dontdream.it/wp-menubar-3-documentation#Upgrading%20procedure).
 
-== Frequently Asked Questions ==
+== Documentation ==
 
 See the [WP Menubar 3 documentation](http://www.dontdream.it/wp-menubar-3-documentation).
 
-== Screenshots ==
+== Screenshots and Demo ==
 
-See the [WordPress Menubar](http://www.dontdream.it/category/wordpress-menubar) category archive.
+See the [WordPress Menubar](http://www.dontdream.it/category/wordpress-menubar) category archive or visit the [WP Menubar demo site](http://www.dontdream.it/demo/).
