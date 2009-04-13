@@ -2,9 +2,9 @@
 
 /*
 Plugin Name: Menubar
-Plugin URI: http://www.dontdream.it/wp-menubar-30
+Plugin URI: http://www.dontdream.it/wp-menubar-3-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 3.0
+Version: 3.1
 Author: andrea@dontdream.it
 Author URI: http://www.dontdream.it/
 */
@@ -34,13 +34,14 @@ if (!defined ('WP_PLUGIN_DIR'))
 $wpm_options = new stdClass;
 $wpm_options->admin_name	= 'Menubar';
 $wpm_options->menubar_dir	= '/menubar';
+$wpm_options->templates_dir	= '/menubar-templates';
 $wpm_options->admin_file	= 'menubar/wpm-admin.php';
 $wpm_options->form_action	= get_option ('siteurl'). '/wp-admin/edit.php?page='. $wpm_options->admin_file;
 $wpm_options->php_file    	= 'wpm3.php';
 $wpm_options->table_name  	= 'menubar3';
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '3.0';
+$wpm_options->wpm_version 	= '3.1';
 
 function wpm_readnode ($node_id)
 {
@@ -136,22 +137,27 @@ function wpm_include ($template, $css)
 {
 	global $wpm_options;
 
-	$url = WP_PLUGIN_URL . $wpm_options->menubar_dir;
-	$root = WP_PLUGIN_DIR . $wpm_options->menubar_dir;
+	$url = WP_PLUGIN_URL . $wpm_options->templates_dir;
+	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
 
-	if ($css)
-		if (!file_exists ("$root/$template/$css"))
-			echo "<br /><b>WP Menubar error</b>:  File $template/$css not found!<br />\n";
-		else
-			echo '<link rel="stylesheet" href="' . "$url/$template/$css" .  
-				 '" type="text/css" media="screen" />' . "\n";
-	
-	if (!file_exists ("$root/$template/$wpm_options->php_file"))
-		echo "<br /><b>WP Menubar error</b>:  File $template/$wpm_options->php_file not found!<br />\n";
+	if (!file_exists ("$root"))
+		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir not found!<br />\n<br />Please create that folder and install at least one Menubar template.<br />\n";
+	elseif (!file_exists ("$root/$template"))
+		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir/$template not found!<br />\n";
+	elseif ($template && !file_exists ("$root/$template/$wpm_options->php_file"))
+		echo "<br /><b>WP Menubar error</b>:  File $template/$wpm_options->php_file not found in wp-content/plugins$wpm_options->templates_dir!<br />\n";
+	elseif ($css && !file_exists ("$root/$template/$css"))
+		echo "<br /><b>WP Menubar error</b>:  File $template/$css not found in wp-content/plugins$wpm_options->templates_dir!<br />\n";
 	else
-		include_once ("$root/$template/$wpm_options->php_file");
+	{
+		if ($template)
+			include_once ("$root/$template/$wpm_options->php_file");
+		if ($css)
+			echo '<link rel="stylesheet" href="'. "$url/$template/$css". '" type="text/css" media="screen" />' . "\n";
+		return true;
+	}
 
-	return true;
+	return false;
 }
 
 function wpm_display ($menuname, $template='', $css='')
@@ -168,24 +174,28 @@ function wpm_display ($menuname, $template='', $css='')
 	if ($css == '') $css = $menu->cssclass;
 
 	$version = $wpm_options->wpm_version;
-	$root = WP_PLUGIN_DIR . $wpm_options->menubar_dir;
+	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
 	$function = $wpm_options->function_name . $template; 
 
-	if ($menu == '')
-		echo "<br /><b>WP Menubar error</b>:  Menu $menuname not found!<br />\n";
+	if (!file_exists ("$root"))
+		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir not found!<br />\n<br />Please create that folder and install at least one Menubar template.<br />\n";
 	elseif (!file_exists ("$root/$template"))
-		echo "<br /><b>WP Menubar error</b>:  Template $template not found!<br />\n";
+		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir/$template not found!<br />\n";
+	elseif ($menu == '')
+		echo "<br /><b>WP Menubar error</b>:  Menu $menuname not found in database!<br />\n";
+	elseif ($template == '') 
+		echo "<br /><b>WP Menubar error</b>:  No template selected for menu $menuname!<br />\n";
+	elseif (!function_exists ($function))
+		echo "<br /><b>WP Menubar error</b>:  Function $function() not found!<br />\n";
 	else
 	{
 		echo "<!-- WP Menubar $version: start menu $menuname, template $template, CSS $css -->\n";
-		if (function_exists ($function))
-			$function ($menu, $css);
-		else
-			echo "<br /><b>WP Menubar error</b>:  Function $function() not found!<br />\n";
+		$function ($menu, $css);
 		echo "<!-- WP Menubar $version: end menu $menuname, template $template, CSS $css -->\n";
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 include ('wpm-menu.php');

@@ -196,7 +196,7 @@ function wpm_template_dropdown ($active_template)
 	global $wpm_options;
 
 	$templates = array();
-	$root = WP_PLUGIN_DIR . $wpm_options->menubar_dir;
+	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
 
 	$folders = @ dir ($root);
 	if ($folders)
@@ -242,7 +242,7 @@ function wpm_template_dropdown ($active_template)
 	$out .= "</select>\n";
 	echo $out;
 
-	return true;
+	return count($templates);
 }
 
 function wpm_2to1 ($folder, $cfile)
