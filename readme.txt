@@ -2,28 +2,44 @@
 Tags: dropdown, menu, navigation
 Requires at least: 2.3
 Tested up to: 2.7.1
-Stable tag: 3.0
+Stable tag: 3.1
 
 Configurable menus with your choice of menu templates.
 
 == Description ==
 
-With the Menubar plugin you can:
+With Menubar you can easily build and manage multi-level menus for your WordPress site.
 
-* build fully customized flat or hierarchical menus with links to homepage, frontpage, categories, category trees, static pages, page trees, single posts, and external URLs of your choice; the currently selected menu item is dynamically highlighted;
+Menu item types are home, frontpage, category, category tree, static page, page tree, heading, single post, external URL, in any combination.
 
-* specify where to place each menu by inserting in your theme a short line of PHP code; there is no need to remove that line if you later deactivate the plugin;
+Each menu can be integrated in your theme with a short line of PHP code:
 
-* choose one of the included menu templates to style your menus, and modify or rewrite the menu templates as you like.
+`<?php do_action('wp_menubar','menu_name'); ?>`
+
+The style of your menus is controlled by Menubar templates. A few easily customizable templates are already available, and new templates can be added without changing the plugin code.
+
+From version 3.1 your Menubar templates will be stored in the *menubar-templates* folder, so future automatic upgrades won't overwrite your customizations.
+
+A Menubar live demo is available at the [WP Menubar demo site](http://www.dontdream.it/demo/).
 
 == Installation ==
 
 See the [First installation procedure](http://www.dontdream.it/wp-menubar-3-documentation#First%20installation%20procedure) or the [Upgrading procedure](http://www.dontdream.it/wp-menubar-3-documentation#Upgrading%20procedure).
 
-== Documentation ==
+== Frequently Asked Questions ==
 
 See the [WP Menubar 3 documentation](http://www.dontdream.it/wp-menubar-3-documentation).
 
-== Screenshots and Demo ==
+== Screenshots ==
 
 See the [WordPress Menubar](http://www.dontdream.it/category/wordpress-menubar) category archive or visit the [WP Menubar demo site](http://www.dontdream.it/demo/).
+
+== Changelog ==
+
+= Version 3.1 =
+
+Your Menubar templates are now stored in the *menubar-templates* folder, so future automatic upgrades won't overwrite your customizations.
+
+= Version 3.0 =
+
+First version hosted in the WordPress Plugin Directory.
