@@ -1,3 +1,12 @@
+
+<script type='text/javascript'>
+jQuery(document).ready(function($) {
+  $("#reset").submit(function() {
+    return confirm("This will delete all your menus - confirm?");
+  });
+});
+</script>
+
 <?php
 
 include ('wpm-tree.php');
@@ -18,10 +27,8 @@ function wpm_item_list ($item_id, $list, $level)
 {
 	$item = wpm_read_node ($item_id);
 	
-	if ($level == 0)
-		$list[$item->id] = __('Top Level','wpm');
-	else
-		$list[$item->id] = str_repeat("&#8212; ", $level) . $item->name;
+	if ($level > 0)
+		$list[$item->id] = str_repeat("&#8212; ", $level-1) . $item->name;
 		
 	if ($item->down)  $list = wpm_item_list ($item->down, $list, $level+1);
 	if ($item->side)  $list = wpm_item_list ($item->side, $list, $level);
@@ -263,7 +270,7 @@ function wpm_1to2 ($template)
 	return $list;
 }
 
-wp_reset_vars (array ('submit', 'action', 'itemid', 'parentid', 'name', 'type', 
+wp_reset_vars (array ('submit', 'action', 'itemid', 'order', 'orderid', 'name', 'type', 
 			'Category', 'CategoryTree', 'Page', 'PageTree', 'Post', 'External',
 			'cssclass', 'attributes', 'menuid', 'menuname', 'template'));
 			
@@ -286,6 +293,8 @@ case 'External':
 	$selection = $External;  break;
 }
 			
+$msg = 0;
+
 switch ($submit)
 {
 case __('Reset Menubar', 'wpm'):  
@@ -351,10 +360,12 @@ case __('Add Menu', 'wpm'):
 	$list = wpm_1to2 ($template);
 	$wpm_menu->selection = $list[0];
 	$wpm_menu->cssclass = $list[1];
-	
+	$wpm_menu->attributes = '';
 	$wpm_menu->type = $wpm_options->menu_type;
 	
-	if ($menuid = wpm_create_node (0, $wpm_menu))
+	$wpm_menu = wpm_create_child (0, $wpm_menu);
+	
+	if ($menuid = $wpm_menu->id)
 		$msg = 11; 
 	else
 		$msg = 12; 
@@ -386,13 +397,20 @@ case 'add':
 		if ($wpm_item->type == 'Category')  $wpm_item->type = 'CategoryTree';
 	}
 
-	if ($parentid)
-		if (wpm_create_node ($parentid, $wpm_item))
-			$msg = 1; 
-		else
-			$msg = 4; 
+	if ($order == 0)
+		$created = wpm_create_child ($menuid, $wpm_item);
+	else switch ($order)
+	{
+	case '1':  $created = wpm_create_before ($orderid, $wpm_item); break;
+	case '2':  $created = wpm_create_child ($orderid, $wpm_item); break;
+	case '3':  $created = wpm_create_after ($orderid, $wpm_item); break;
+	default:   $created = 0; break;
+	}
+
+	if ($created)
+		$msg = 1; 
 	else
-		$msg = 15; 
+		$msg = 4; 
 
 break;
 case 'delete':
@@ -424,14 +442,23 @@ case 'update':
 	$wpm_item->selection = $selection;
 	$wpm_item->cssclass = $cssclass;
 	$wpm_item->attributes = $attributes;
-	
+
 	if (!$wpm_item->selection)
 	{
 		if ($wpm_item->type == 'Page')  $wpm_item->type = 'PageTree';
 		if ($wpm_item->type == 'Category')  $wpm_item->type = 'CategoryTree';
 	}
 
-	if (wpm_update_node ($wpm_item))
+	switch ($order)
+	{
+	case '1':  wpm_move_before ($orderid, $itemid); break;
+	case '2':  wpm_move_child ($orderid, $itemid); break;
+	case '3':  wpm_move_after ($orderid, $itemid); break;
+	}
+
+	$updated = wpm_update_node ($wpm_item);
+
+	if ($updated)
 		$msg = 3; 
 	else
 		$msg = 5; 
@@ -458,7 +485,6 @@ $messages[11] = __('Menu added.', 'wpm');
 $messages[12] = __('Error: duplicate or null menu name!', 'wpm');
 $messages[13] = __('Please add your first menu.', 'wpm');
 $messages[14] = __('Error: item has sub-items!', 'wpm');
-$messages[15] = __('Error: parent not selected!', 'wpm');
 ?>
 
 <?php if ($msg) : ?>
@@ -508,7 +534,7 @@ $messages[15] = __('Error: parent not selected!', 'wpm');
 <p class="submit">
 <input type="submit" name="submit" value="<?php _e('Reset Menubar', 'wpm'); ?>"  />
 <strong>
-<?php _e('Warning: this will delete all your current menus and menu items!', 'wpm'); ?>
+<?php _e('Clean up the Menubar DB table', 'wpm'); ?>
 </strong>
 </p>
 </form>

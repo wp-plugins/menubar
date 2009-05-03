@@ -11,6 +11,22 @@
 // ]]>
 </script>  
 
+<script type='text/javascript'>
+jQuery(document).ready(function($) {
+  $("#order").change(function() {
+    if ($("#order option:selected").val() == 0)
+      $("#orderid").css("display", "none");
+    else
+      $("#orderid").css("display", "");
+    });
+});
+</script>
+
+<?php 
+	$item_list = wpm_item_list ($menuid, array(), 0); 
+	$page_list = wpm_page_list (0, array(), 0); 
+	$cat_list  = wpm_cat_list (0, array(), 0);
+?>
 <?php
 
 if ($action == 'edit') {
@@ -19,12 +35,15 @@ if ($action == 'edit') {
 	$form = '<form name="update" id="update" method="post" action="'. $wpm_options->form_action. '">';
 	$action = 'update';
 	$nonce_action = 'update_' . $item->id;
+	$selected = key ($item_list); 
 } else {
 	$heading = __('Add Menu Item', 'wpm');
 	$submit_text = __('Add Menu Item', 'wpm');
 	$form = '<form name="add" id="add" method="post" action="'. $wpm_options->form_action. '">';
 	$action = 'add';
 	$nonce_action = 'add';
+	end ($item_list); 
+	$selected = key ($item_list); 
 }
 
 $typelist = array (
@@ -52,12 +71,8 @@ $typelist = array (
 
 <table class="editform" width="100%" cellspacing="2" cellpadding="5">
 
-	<?php $item_list = wpm_item_list ($menuid, $item_list, 0); ?>
-	<?php $page_list = wpm_page_list (0, $page_list, 0); ?>
-	<?php $cat_list = wpm_cat_list (0, $cat_list, 0); ?>
-
-	<?php if ($action == 'add') 
-		  wpm_select (__('Parent:', 'wpm'), 'parentid', '', $item_list, $menuid); ?>
+	<?php if (count($item_list) > 0)
+		  wpm_order (__('Order:', 'wpm'), 'orderid', '', $item_list, $selected, $action); ?>
 
 	<?php wpm_input  (__('Name:', 'wpm'), 'name', $item->name, '20', __('(e.g. Home, News)', 'wpm')); ?>
 
@@ -82,6 +97,37 @@ $typelist = array (
 
 <?php
 
+function wpm_order ($label, $name, $attr, $list, $selected, $action)
+{
+	echo "\n<tr>\n";
+		echo "<th width=\"20%\" scope=\"row\" valign=\"top\">\n";
+			echo "<label for=\"$name\"> $label </label>\n";
+		echo "</th>\n";
+		echo "<td>\n";		
+			echo "<select id=\"order\" name=\"order\">\n";
+			if ($action == 'update') 
+				echo "<option value=\"0\" selected=\"selected\">". __('select', 'wpm'). "&nbsp; </option>\n";
+			echo "<option value=\"1\">". __('Before...', 'wpm'). "&nbsp; </option>\n";
+			echo "<option value=\"2\">". __('Child of...', 'wpm'). "&nbsp; </option>\n";
+			echo "<option value=\"3\"";
+			if ($action != 'update') echo " selected=\"selected\"";
+			echo ">". __('After...', 'wpm'). "&nbsp; </option>\n";
+			echo "</select>\n";
+			echo "<select id=\"$name\" name=\"$name\"";
+			if ($action == 'update') echo "style=\"display: none;\"";
+			echo ">\n";
+			foreach ($list as $value => $caption)
+			{
+				echo "<option value=\"$value\"";
+				if ($value == $selected) echo " selected=\"selected\"";
+ 				echo "> $caption &nbsp; </option>\n";
+			}
+			echo "</select>\n";
+		echo "</td>\n";
+	echo "</tr>\n";
+
+	return true;
+}
 function wpm_select ($label, $name, $attr, $list, $selected)
 {
 	echo "\n<tr>\n";

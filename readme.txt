@@ -1,8 +1,8 @@
 === Menubar ===
-Tags: dropdown, menu, navigation
+Tags: dropdown, suckerfish, menu, menubar, navigation
 Requires at least: 2.3
 Tested up to: 2.7.1
-Stable tag: 3.1
+Stable tag: 3.2
 
 Configurable menus with your choice of menu templates.
 
@@ -10,15 +10,13 @@ Configurable menus with your choice of menu templates.
 
 With Menubar you can easily build and manage multi-level menus for your WordPress site.
 
-Menu item types are home, frontpage, category, category tree, static page, page tree, heading, single post, external URL, in any combination.
+* Choose menu item types among Home, FrontPage, Category, CategoryTree, Page, PageTree, Heading, Post, External, in any combination;
 
-Each menu can be integrated in your theme with a short line of PHP code:
+* Display a menu writing the line `<?php do_action('wp_menubar','menu_name'); ?>` in your theme, e.g. in *header.php*;
 
-`<?php do_action('wp_menubar','menu_name'); ?>`
+* Style your menus using Menubar templates - a few easily customizable templates are already available, and new templates can be added without changing the plugin code;
 
-The style of your menus is controlled by Menubar templates. A few easily customizable templates are already available, and new templates can be added without changing the plugin code.
-
-From version 3.1 your Menubar templates will be stored in the *menubar-templates* folder, so future automatic upgrades won't overwrite your customizations.
+* Upgrade automatically to a newer Menubar version without losing your template customizations.
 
 A Menubar live demo is available at the [WP Menubar demo site](http://www.dontdream.it/demo/).
 
@@ -36,10 +34,8 @@ See the [WordPress Menubar](http://www.dontdream.it/category/wordpress-menubar) 
 
 == Changelog ==
 
-= Version 3.1 =
+* Version 3.2: Added more options to easily rearrange the order of your menu items
 
-Your Menubar templates are now stored in the *menubar-templates* folder, so future automatic upgrades won't overwrite your customizations.
+* Version 3.1: Menubar templates are now stored in the *menubar-templates* folder, so future automatic upgrades won't overwrite your customizations
 
-= Version 3.0 =
-
-First version hosted in the WordPress Plugin Directory.
+* Version 3.0: First version hosted in the WordPress Plugin Directory
