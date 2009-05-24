@@ -19,7 +19,7 @@ function wpm_menu ($node_id, $level, $css, $ul, $li)
 	switch ($item->type) 
 	{
 	case 'Menu':
-		$mid = 'wpm' . $item->name;		
+		$mid = 'wpmenu' . $item->id;
 		$mclass = $css? substr($css, 0, -4): $item->selection;
 
 		$javascript = '

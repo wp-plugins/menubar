@@ -4,7 +4,7 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/wp-menubar-3-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 3.2
+Version: 3.3
 Author: andrea@dontdream.it
 Author URI: http://www.dontdream.it/
 */
@@ -31,6 +31,7 @@ if (!defined ('WP_PLUGIN_URL'))
 if (!defined ('WP_PLUGIN_DIR'))
 	define ('WP_PLUGIN_DIR', ABSPATH. 'wp-content/plugins' );
 
+global $wpm_options;
 $wpm_options = new stdClass;
 $wpm_options->admin_name	= 'Menubar';
 $wpm_options->menubar_dir	= '/menubar';
@@ -41,7 +42,7 @@ $wpm_options->php_file    	= 'wpm3.php';
 $wpm_options->table_name  	= 'menubar3';
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '3.2';
+$wpm_options->wpm_version 	= '3.3';
 
 function wpm_readnode ($node_id)
 {
@@ -69,7 +70,6 @@ function wpm_create ()
 	}
 
 	$table_name = $wpdb->prefix . $wpm_options->table_name;
-	$table_name = $wpdb->prefix . 'menubar3';
 
 	$sql = "CREATE TABLE $table_name (
   		`id`        	bigint(20)   NOT NULL auto_increment,
@@ -225,7 +225,7 @@ function wpm_is_descendant ($ancestor)
 	}
 }
 
-add_action ('activate_menubar/wpm-main.php', 'wpm_create');
+register_activation_hook (__FILE__, 'wpm_create');
 add_action ('admin_menu', 'wpm_add_pages');
 add_action ('wp_head', 'wpm_css', 10, 2);
 add_action ('wp_menubar', 'wpm_display', 10, 3);
