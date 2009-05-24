@@ -223,17 +223,17 @@ function _wpm_link_before ($before_id, $node)
 	return $node;
 }
 
-function _wpm_is_descendant ($node_id, $parent_id)
+function _wpm_is_descendant ($node_id, $parent_id, $level=0)
 {
 	if ($node_id == $parent_id)  return true;
 	
 	$item = wpm_read_node ($parent_id);
 			
 	if ($item->down)  
-		if (_wpm_is_descendant ($node_id, $item->down))  return true;
+		if (_wpm_is_descendant ($node_id, $item->down, $level+1))  return true;
 
-	if ($item->side)  
-		if (_wpm_is_descendant ($node_id, $item->side))  return true;
+	if ($level && $item->side)  
+		if (_wpm_is_descendant ($node_id, $item->side, $level))  return true;
 
 	return false;
 }
