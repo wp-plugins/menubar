@@ -7,7 +7,8 @@ function wpm_menu ($node_id, $level, $css, $ul, $li)
 
 	$itemdown = wpm_menu ($item->down, $level, $css, $ul, $li);
 	
-	$name = __($item->name);
+	$name = $item->name? __($item->name): "";
+	$attributes = $item->attributes? __($item->attributes): "";
 	$class = $item->cssclass? " class=\"$item->cssclass\"": "";
 	$selected = $item->cssclass?
 			 " class=\"$item->cssclass active selected\"": " class=\"active selected\"";
@@ -56,7 +57,7 @@ if (window.attachEvent) window.attachEvent("onload", '.$mid.'Hover);
 		if ($sof == 'page') 
 			$url = $pfp? get_page_link ($pfp): '';
 		else
-			$url = get_option ('home');
+			$url = get_bloginfo ('url', 'display');
 		break;
 
 	case 'FrontPage':
@@ -71,7 +72,7 @@ if (window.attachEvent) window.attachEvent("onload", '.$mid.'Hover);
 		{
 			if (is_home()) $class = $selected;
 		}
-		$url = get_option ('home');
+		$url = get_bloginfo ('url', 'display');
 		break;
 
 	case 'Heading':
@@ -102,7 +103,7 @@ if (window.attachEvent) window.attachEvent("onload", '.$mid.'Hover);
 		if ($list != '<li>'. __('No categories'). '</li>')
 			$ulist = sprintf ($ul, $list);
  
-		$output = sprintf ($li, $class, " $href $item->attributes", $name, $ulist);
+		$output = sprintf ($li, $class, " $href $attributes", $name, $ulist);
 
 		$url = '';
 		break;
@@ -122,7 +123,7 @@ if (window.attachEvent) window.attachEvent("onload", '.$mid.'Hover);
 		if ($list != '')
 			$ulist = sprintf ($ul, $list);
 
-		$output = sprintf ($li, $class, " $href $item->attributes", $name, $ulist);
+		$output = sprintf ($li, $class, " $href $attributes", $name, $ulist);
  
 		$url = '';
 		break;
@@ -145,7 +146,7 @@ if (window.attachEvent) window.attachEvent("onload", '.$mid.'Hover);
 	{
 		$href = ($url != '*')? "href=\"$url\"": "style=\"cursor:default;\"";
 
-		$output = sprintf ($li, $class, " $href $item->attributes", $name, $itemdown['output']);
+		$output = sprintf ($li, $class, " $href $attributes", $name, $itemdown['output']);
 	}
 
 	$itemside = wpm_menu ($item->side, $level, $css, $ul, $li);
