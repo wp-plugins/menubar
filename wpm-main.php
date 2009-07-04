@@ -4,7 +4,7 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/wp-menubar-3-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 3.4
+Version: 3.5
 Author: andrea@dontdream.it
 Author URI: http://www.dontdream.it/
 */
@@ -42,7 +42,7 @@ $wpm_options->php_file    	= 'wpm3.php';
 $wpm_options->table_name  	= 'menubar3';
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '3.4';
+$wpm_options->wpm_version 	= '3.5';
 
 function wpm_readnode ($node_id)
 {
@@ -208,7 +208,7 @@ function wpm_is_descendant ($ancestor)
 	if (!$wp_query->is_page)  return false;
 	if (!$ancestor)  return true;
 	
-	$page_obj = $wp_query->get_queried_object();
+	$page_obj = $wp_query->get_queried_object ();
 	$page = $page_obj->ID;
 	if ($page == $ancestor)  return true;
 
@@ -223,6 +223,60 @@ function wpm_is_descendant ($ancestor)
 
 		$page = $parent;
 	}
+}
+
+if (class_exists ('WP_Widget'))
+{
+class WP_Widget_Menubar extends WP_Widget
+{
+	function WP_Widget_Menubar ()
+	{
+		$widget_ops = array ('description' => __('Select a menu to display', 'wpm'));
+		$this->WP_Widget ('Menubar', 'Menubar', $widget_ops);
+	}
+
+	function widget ($args, $instance)
+	{
+		extract ($args);
+		$title = apply_filters ('widget_title', esc_attr ($instance['title']));
+	
+		echo $before_widget;
+		if ( $title )
+			echo $before_title . $title . $after_title;
+		do_action ('wp_menubar', $instance['menu']);
+		echo $after_widget;
+	}
+
+	function update ($new_instance, $old_instance)
+	{
+		$instance = $old_instance;
+		$new_instance = wp_parse_args ((array) $new_instance, array ('title' => '', 'menu' => ''));
+		$instance['title'] = strip_tags ($new_instance['title']);
+		$instance['menu'] = strip_tags ($new_instance['menu']);
+		return $instance;
+	}
+
+	function form ($instance)
+	{
+		$instance = wp_parse_args ((array) $instance, array ('title' => '', 'menu' => ''));
+		$title = strip_tags ($instance['title']);
+		$menu = strip_tags ($instance['menu']);
+	?>
+		<p>
+		<label for="<?php echo $this->get_field_id ('title'); ?>"><?php _e ('Title:', 'wpm'); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id ('title'); ?>" name="<?php echo $this->get_field_name ('title'); ?>" type="text" value="<?php echo esc_attr ($title); ?>" />
+		<label for="<?php echo $this->get_field_id ('menu'); ?>"><?php _e ('Menu name:', 'wpm'); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id ('menu'); ?>" name="<?php echo $this->get_field_name ('menu'); ?>" type="text" value="<?php echo esc_attr ($menu); ?>" />
+		</p>
+	<?php
+	}
+}
+
+add_action ('widgets_init', 'wpm_widget_init');
+function wpm_widget_init ()
+{
+	register_widget ('WP_Widget_Menubar');
+}
 }
 
 register_activation_hook (__FILE__, 'wpm_create');
