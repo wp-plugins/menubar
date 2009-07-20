@@ -1,7 +1,7 @@
 === Menubar ===
 Tags: dropdown, suckerfish, menu, menubar, navigation
 Requires at least: 2.3
-Tested up to: 2.8.1
+Tested up to: 2.8.2
 Stable tag: 3.5
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
