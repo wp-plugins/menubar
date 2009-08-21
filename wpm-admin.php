@@ -2,7 +2,7 @@
 <script type='text/javascript'>
 jQuery(document).ready(function($) {
   $("#reset").submit(function() {
-    return confirm("This will delete all your menus - confirm?");
+    return confirm("You are about to delete all your menus.\n 'Cancel' to stop, 'OK' to delete.");
   });
 });
 </script>
@@ -198,7 +198,7 @@ function wpm_menu_dropdown ($menuid)
 	return true;
 }
 
-function wpm_template_dropdown ($active_template)
+function wpm_template_dropdown ($active_template, $echo=true)
 {
 	global $wpm_options;
 
@@ -237,6 +237,8 @@ function wpm_template_dropdown ($active_template)
 		}
 	}
 
+	if (count ($templates) == 0)  return false;
+
 	sort ($templates);
 
 	$out = "<select name='template' >\n";
@@ -247,9 +249,9 @@ function wpm_template_dropdown ($active_template)
 	endforeach;
 
 	$out .= "</select>\n";
-	echo $out;
+	if ($echo)  echo $out;
 
-	return count($templates);
+	return true;
 }
 
 function wpm_2to1 ($folder, $cfile)
@@ -268,6 +270,20 @@ function wpm_1to2 ($template)
 	if ($list[1] == 'CSS') $list[1] = '';
 
 	return $list;
+}
+
+function wpm_check_templates ()
+{
+	global $wpm_options;
+
+	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
+	
+	if (!file_exists ("$root"))  return 1;
+	
+	$tpfound = wpm_template_dropdown ('', false);
+	if (!$tpfound)  return 2;
+
+	return 0;
 }
 
 wp_reset_vars (array ('submit', 'action', 'itemid', 'order', 'orderid', 'name', 'type', 
@@ -466,11 +482,6 @@ case 'update':
 break;
 }
 
-if (!$menuid)
-	$menuid = wpm_get_default_menu ();
-	
-if (!$menuid)  $msg = 13;
-
 $messages[1] = __('Menu item added.', 'wpm');
 $messages[2] = __('Menu item deleted.', 'wpm');
 $messages[3] = __('Menu item updated.', 'wpm');
@@ -485,15 +496,29 @@ $messages[11] = __('Menu added.', 'wpm');
 $messages[12] = __('Error: duplicate or null menu name!', 'wpm');
 $messages[13] = __('Please add your first menu.', 'wpm');
 $messages[14] = __('Error: item has sub-items!', 'wpm');
+$messages[15] = __('Welcome to Menubar!</p><p>To complete your installation, please create the folder <em>wp-content/plugins/menubar-templates</em></p><p>and upload at least one Menubar template (<a href=http://www.dontdream.it/wp-menubar-3-documentation#Menu%20templates>see instructions</a>).', 'wpm');
+$messages[16] = __('The folder <em>wp-content/plugins/menubar-templates</em> has been successfully detected.</p><p>To complete your installation, please upload at least one Menubar template (<a href=http://www.dontdream.it/wp-menubar-3-documentation#Menu%20templates>see instructions</a>).', 'wpm');
+
+if (!$menuid)  $menuid = wpm_get_default_menu ();
+if (!$menuid)  $msg = 13;
+
+$missingtp = wpm_check_templates (); 
+if ($missingtp)  $msg = $missingtp + 14;
+
 ?>
+
+<div class="wrap">
+<div id="icon-plugins" class="icon32">
+<br/>
+</div>
+<h2><?php _e('Manage Menubar', 'wpm'); ?> </h2>
+<br/>
 
 <?php if ($msg) : ?>
 <div id="message" class="updated fade"><p><?php echo $messages[$msg]; ?></p></div>
 <?php endif; ?>
 
-<div class="wrap">
-
-<h2><?php _e('Select Menu', 'wpm'); ?> </h2>
+<?php if (!$missingtp) { ?>
 
 <form name="viewmenu" id="viewmenu" method="post" action="<?php echo $wpm_options->form_action; ?>">
 	<fieldset>
@@ -509,10 +534,13 @@ $messages[14] = __('Error: item has sub-items!', 'wpm');
 	</fieldset>
 </form>
 
+<?php } ?>
+
 </div>
 
 <?php
 
+	if (!$missingtp)
 	if ($menuid)
 	{
 		wpm_list_menu_items ($menuid); 

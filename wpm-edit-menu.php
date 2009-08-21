@@ -32,36 +32,13 @@ if ($action == 'editmenu') {
 	<tr id="select6" >
 		<th scope="row" valign="top"> <label for="template">  <?php _e('Template:', 'wpm'); ?></label> </th>
 		<td>
-		<?php $nsel = wpm_template_dropdown (wpm_2to1 ($wpm_menu->selection, $wpm_menu->cssclass)); ?>
+		<?php wpm_template_dropdown (wpm_2to1 ($wpm_menu->selection, $wpm_menu->cssclass)); ?>
 		<?php _e('(select a menu template and stylesheet)', 'wpm'); ?>
 		</td>
 	</tr>
 </table>
 
-<?php 
-	global $wpm_options;
-
-	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
-	
-	if (!file_exists ("$root"))
-	{
-		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir not found!<br />\n";
-		echo "<br />Please create that folder and install at least one Menubar template.<br />\n";
-	}
-	elseif ($nsel == 0)
-	{
-		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir is empty!<br />\n";
-		echo "<br />Please install at least one Menubar template.<br />\n";
-	}
-	else
-	{
-?>
-
 <p class="submit"> <input type="submit" name="submit" value="<?php echo $submit_text ?>" /> </p>
-
-<?php 
-	}
-?>
 
 </form>
 </div>
