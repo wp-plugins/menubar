@@ -1,8 +1,8 @@
 === Menubar ===
 Tags: dropdown, suckerfish, menu, menubar, navigation
 Requires at least: 2.3
-Tested up to: 2.8.3
-Stable tag: 3.5
+Tested up to: 2.8.4
+Stable tag: 3.6
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -32,6 +32,7 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
+* Version 3.6: Improved the first installation procedure with more user-friendly messages
 * Version 3.5: Added the Menubar widget to display menus in a widgetized area (only with WordPress 2.8+)
 * Version 3.4: Improved compatibility with the qTranslate plugin
 * Version 3.3: Fixed a bug with menu names containing a space, and a bug with a special menu reordering case
