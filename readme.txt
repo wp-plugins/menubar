@@ -1,8 +1,8 @@
 === Menubar ===
 Tags: dropdown, suckerfish, menu, menubar, navigation
-Requires at least: 2.3
+Requires at least: 2.6
 Tested up to: 2.8.4
-Stable tag: 3.6
+Stable tag: 4.0
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -10,9 +10,9 @@ Single and multi-level menus for your WordPress site, styled with customizable m
 
 With Menubar you can easily build and manage single and multi-level menus for your WordPress site.
 
-* Build your menus choosing menu items among Home, FrontPage, Category, CategoryTree, Page, PageTree, Heading, Post, External, in any combination
+* Build your menus choosing menu items among Home, FrontPage, Category, CategoryTree, Page, PageTree, Heading, Post, SearchBox, External, in any combination
 * Display a menu inserting in your theme, e.g. at the end of *header.php*, the line `<?php do_action ('wp_menubar', 'your_menu_name'); ?>`
-* Use the Menubar widget to display your menus in a widgetized area / sidebar (only with WordPress 2.8+)
+* Use the Menubar widget to display your menus in a widgetized area / sidebar (only with WordPress 2.8 or higher)
 * Style your menus using Menubar templates - a few easily customizable templates are already available, and you can add new templates without changing the plugin code
 * Upgrade automatically to a newer Menubar version without losing your template customizations
 
@@ -32,10 +32,21 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
-* Version 3.6: Improved the first installation procedure with more user-friendly messages
-* Version 3.5: Added the Menubar widget to display menus in a widgetized area (only with WordPress 2.8+)
-* Version 3.4: Improved compatibility with the qTranslate plugin
-* Version 3.3: Fixed a bug with menu names containing a space, and a bug with a special menu reordering case
-* Version 3.2: Added more options to easily rearrange the order of your menu items
-* Version 3.1: Menubar templates are now stored in the *menubar-templates* folder, so future automatic upgrades won't overwrite your customizations
-* Version 3.0: First version hosted in the WordPress Plugin Directory
+= [4.0](http://www.dontdream.it/wp-menubar-version-4-0) =
+* New template structure for better customization - old templates are supported as well
+* Added the SearchBox type to integrate a search box in your menubar (only with new templates)
+* Moved the Menubar admin page under the Appearance admin menu
+= [3.6](http://www.dontdream.it/menubar-3-6-available) =
+* Improved the first installation procedure with more user-friendly messages
+= [3.5](http://www.dontdream.it/menubar-3-5-with-widget) =
+* Added the Menubar widget to display menus in a widgetized area (only with WordPress 2.8+)
+= [3.4](http://www.dontdream.it/menubar-3-4-and-qtranslate) =
+* Improved compatibility with the qTranslate plugin
+= [3.3](http://www.dontdream.it/menubar-33-bug-fixing-release) =
+* Fixed a bug with menu names containing a space, and a bug with a special menu reordering case
+= [3.2](http://www.dontdream.it/reorder-your-menus-with-menubar-32) =
+* Added more options to easily rearrange the order of your menu items
+= [3.1](http://www.dontdream.it/menubar-31-available) =
+* Menubar templates are now stored in the *menubar-templates* folder, so future automatic upgrades won't overwrite your customizations
+= [3.0](http://www.dontdream.it/wp-menubar-30) =
+* First version hosted in the WordPress Plugin Directory

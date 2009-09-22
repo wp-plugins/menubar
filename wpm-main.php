@@ -4,7 +4,7 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/wp-menubar-3-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 3.6
+Version: 4.0
 Author: andrea@dontdream.it
 Author URI: http://www.dontdream.it/
 */
@@ -37,12 +37,12 @@ $wpm_options->admin_name	= 'Menubar';
 $wpm_options->menubar_dir	= '/menubar';
 $wpm_options->templates_dir	= '/menubar-templates';
 $wpm_options->admin_file	= 'menubar/wpm-admin.php';
-$wpm_options->form_action	= get_option ('siteurl'). '/wp-admin/edit.php?page='. $wpm_options->admin_file;
+$wpm_options->form_action	= get_option ('siteurl'). '/wp-admin/themes.php?page='. $wpm_options->admin_file;
 $wpm_options->php_file    	= 'wpm3.php';
 $wpm_options->table_name  	= 'menubar3';
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '3.6';
+$wpm_options->wpm_version 	= '4.0';
 
 function wpm_readnode ($node_id)
 {
@@ -78,12 +78,13 @@ function wpm_create ()
   		`selection` 	varchar(255) NOT NULL default '',
   		`cssclass`		varchar(255) NOT NULL default '',
   		`attributes`	varchar(255) NOT NULL default '',
-  		`side`      	bigint(20)   NOT NULL default '0',
+  		`options`		longtext     NOT NULL default '',
+		`side`      	bigint(20)   NOT NULL default '0',
   		`down`      	bigint(20)   NOT NULL default '0',
   		PRIMARY KEY (`id`)
 		) $charset_collate; ";
 
-	require_once (ABSPATH . 'wp-admin/upgrade-functions.php');
+	require_once (ABSPATH . 'wp-admin/includes/upgrade.php');
 	dbDelta ($sql);
 
 	return true;
@@ -104,8 +105,10 @@ function wpm_add_pages ()
 {
 	global $wpm_options;
 
-	add_management_page ($wpm_options->admin_name,
+	$page = add_submenu_page ('themes.php', __('Manage Menubar', 'wpm'),
 		$wpm_options->admin_name, 8, $wpm_options->admin_file);
+		
+	add_action ("admin_print_scripts-$page", 'wpm_scripts');
 
 	return true;
 }
@@ -279,11 +282,36 @@ function wpm_widget_init ()
 }
 }
 
+function wpm_ajax ()
+{
+	$command = $_POST['command'];
+	$type = $_POST['type'];
+	
+	switch ($command)
+	{
+	case 'typeargs':
+		include_once ('wpm-edit.php');
+		wpm_typeargs ($type);
+		break;
+		
+	default:
+		echo "bad ajax command received: $command\n";
+		break;
+	}
+	
+	exit;
+}
+
+function wpm_scripts ()
+{
+}
+
 register_activation_hook (__FILE__, 'wpm_create');
 add_action ('admin_menu', 'wpm_add_pages');
+add_action ('wp_ajax_menubar', 'wpm_ajax');
+
 add_action ('wp_head', 'wpm_css', 10, 2);
 add_action ('wp_menubar', 'wpm_display', 10, 3);
 
 load_plugin_textdomain ('wpm', 'wp-content/plugins/menubar');
-
 ?>

@@ -23,63 +23,6 @@ function wpm_get_default_menu ()
 	return $menu->id;
 }
 
-function wpm_item_list ($item_id, $list, $level)
-{
-	$item = wpm_read_node ($item_id);
-	
-	if ($level > 0)
-		$list[$item->id] = str_repeat("&#8212; ", $level-1) . $item->name;
-		
-	if ($item->down)  $list = wpm_item_list ($item->down, $list, $level+1);
-	if ($item->side)  $list = wpm_item_list ($item->side, $list, $level);
-		
-	return $list;
-}
-
-function wpm_page_list ($parent_id, $list, $level)
-{
-	global $wpdb;
-	
-	if ($level == 0)
-		$list[0] = __('All Pages','wpm');
-
-	$sql = "SELECT ID, post_title FROM $wpdb->posts 
-			WHERE post_parent = $parent_id AND post_type = 'page' ORDER BY menu_order";
-
-	$items = $wpdb->get_results ($sql);
-	
-	foreach ($items as $item)
-	{
-		$list[$item->ID] = str_repeat("&#8212; ", $level) . $item->post_title;
-		$list = wpm_page_list ($item->ID, $list, $level+1);
-	}
-		
-	return $list;
-}
-	
-function wpm_cat_list ($parent_id, $list, $level)
-{
-	global $wpdb;
-	
-	if ($level == 0)
-		$list[0] = __('All Categories','wpm');
-
-	$sql = "SELECT t.term_id, t.name 
-			FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt 
-			ON t.term_id = tt.term_id
-			WHERE tt.taxonomy = 'category' AND tt.parent = $parent_id";			
-
-	$items = $wpdb->get_results ($sql);
-	
-	foreach ($items as $item)
-	{
-		$list[$item->term_id] = str_repeat("&#8212; ", $level) . $item->name;
-		$list = wpm_cat_list ($item->term_id, $list, $level+1);
-	}
-
-	return $list;
-}
-	
 function wpm_list_menu_items ($menuid)
 {
 	global $wpdb, $wpm_options;
@@ -97,7 +40,7 @@ function wpm_list_menu_items ($menuid)
 
 <div class="wrap">
 
-<h2><?php printf(__('Manage Menu: %s', 'wpm'), $menu->name); ?></h2>
+<h2><?php printf(__('Menu Items of: %s', 'wpm'), $menu->name); ?></h2>
 
 <table class="widefat">
 
@@ -288,12 +231,14 @@ function wpm_check_templates ()
 
 wp_reset_vars (array ('submit', 'action', 'itemid', 'order', 'orderid', 'name', 'type', 
 			'Category', 'CategoryTree', 'Page', 'PageTree', 'Post', 'External',
+			'SearchBox', 'Custom',
 			'cssclass', 'attributes', 'menuid', 'menuname', 'template'));
-			
+	
 switch ($type)
 {
 case 'Home':
 case 'FrontPage':
+case 'Heading':
 	$selection = '';  break;
 case 'Category': 
 	$selection = $Category;  break;
@@ -305,8 +250,12 @@ case 'PageTree':
 	$selection = $PageTree;  break;
 case 'Post': 
 	$selection = $Post;  break;
+case 'SearchBox': 
+	$selection = $SearchBox;  break;
 case 'External': 
 	$selection = $External;  break;
+case 'Custom': 
+	$selection = $Custom;  break;
 }
 			
 $msg = 0;
@@ -442,7 +391,8 @@ break;
 case 'edit':
 	
 	$item = wpm_read_node ($itemid);
-	include ('wpm-edit.php');
+	include_once ('wpm-edit.php');
+	wpm_item_form ('edit', $menuid, $item);
 	include ('admin-footer.php');
 
 	exit;
@@ -497,7 +447,7 @@ $messages[12] = __('Error: duplicate or null menu name!', 'wpm');
 $messages[13] = __('Please add your first menu.', 'wpm');
 $messages[14] = __('Error: item has sub-items!', 'wpm');
 $messages[15] = __('Welcome to Menubar!</p><p>To complete your installation, please create the folder <em>wp-content/plugins/menubar-templates</em></p><p>and upload at least one Menubar template (<a href=http://www.dontdream.it/wp-menubar-3-documentation#Menu%20templates>see instructions</a>).', 'wpm');
-$messages[16] = __('The folder <em>wp-content/plugins/menubar-templates</em> has been successfully detected.</p><p>To complete your installation, please upload at least one Menubar template (<a href=http://www.dontdream.it/wp-menubar-3-documentation#Menu%20templates>see instructions</a>).', 'wpm');
+$messages[16] = __('No Menubar templates were detected in <em>wp-content/plugins/menubar-templates</em>.</p><p>To complete your installation, please upload at least one Menubar template (<a href=http://www.dontdream.it/wp-menubar-3-documentation#Menu%20templates>see instructions</a>).', 'wpm');
 
 if (!$menuid)  $menuid = wpm_get_default_menu ();
 if (!$menuid)  $msg = 13;
@@ -545,8 +495,8 @@ if ($missingtp)  $msg = $missingtp + 14;
 	{
 		wpm_list_menu_items ($menuid); 
 
-		$item = null;
-		include ('wpm-edit.php');
+		include_once ('wpm-edit.php');
+		wpm_item_form ('create', $menuid);
 	}
 
 	$heading = __('Reset Menubar', 'wpm');
