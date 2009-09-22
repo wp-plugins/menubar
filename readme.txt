@@ -32,21 +32,21 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
-= [4.0](http://www.dontdream.it/wp-menubar-version-4-0) =
+= 4.0 =
 * New template structure for better customization - old templates are supported as well
 * Added the SearchBox type to integrate a search box in your menubar (only with new templates)
 * Moved the Menubar admin page under the Appearance admin menu
-= [3.6](http://www.dontdream.it/menubar-3-6-available) =
+= 3.6 =
 * Improved the first installation procedure with more user-friendly messages
-= [3.5](http://www.dontdream.it/menubar-3-5-with-widget) =
+= 3.5 =
 * Added the Menubar widget to display menus in a widgetized area (only with WordPress 2.8+)
-= [3.4](http://www.dontdream.it/menubar-3-4-and-qtranslate) =
+= 3.4 =
 * Improved compatibility with the qTranslate plugin
-= [3.3](http://www.dontdream.it/menubar-33-bug-fixing-release) =
+= 3.3 =
 * Fixed a bug with menu names containing a space, and a bug with a special menu reordering case
-= [3.2](http://www.dontdream.it/reorder-your-menus-with-menubar-32) =
+= 3.2 =
 * Added more options to easily rearrange the order of your menu items
-= [3.1](http://www.dontdream.it/menubar-31-available) =
+= 3.1 =
 * Menubar templates are now stored in the *menubar-templates* folder, so future automatic upgrades won't overwrite your customizations
-= [3.0](http://www.dontdream.it/wp-menubar-30) =
+= 3.0 =
 * First version hosted in the WordPress Plugin Directory
