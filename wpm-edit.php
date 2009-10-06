@@ -91,6 +91,7 @@ $typelist = array (
 "Post" =>			'Post'			. __(': a single post', 'wpm'),
 "SearchBox" =>		'SearchBox'		. __(': a search box', 'wpm'),
 "External" =>		'External'		. __(': any URL', 'wpm'),
+"Custom" =>			'Custom'		. __(': your custom HTML', 'wpm'),
 );		
 
 ?>
@@ -240,15 +241,15 @@ function wpm_typeargs ($type, $item=null)
 		break;
 
 	case 'SearchBox':
-		wpm_input  (__('Button:', 'wpm'), 'SearchBox', $item->selection, '20', '');
+		wpm_input  (__('Button:', 'wpm'), 'SearchBox', $item->selection, '20', __('(text for the optional Submit button)', 'wpm'));
 		break;
 
 	case 'External':
-		wpm_input  (__('URL:', 'wpm'), 'External', $item->selection, '20', '');
+		wpm_input  (__('URL:', 'wpm'), 'External', $item->selection, '50', '');
 		break;
 
 	case 'Custom':
-		wpm_input  (__('HTML:', 'wpm'), 'Custom', $item->selection, '20', '');
+		wpm_input  (__('HTML:', 'wpm'), 'Custom', $item->selection, '50', '');
 		break;
 	}
 }
@@ -258,7 +259,10 @@ function wpm_item_list ($item_id, $list, $level)
 	$item = wpm_read_node ($item_id);
 	
 	if ($level > 0)
-		$list[$item->id] = str_repeat("&#8212; ", $level-1) . $item->name;
+	{
+		$name = $item->name? $item->name: wpm_default_name ($item->type, $item->selection);
+		$list[$item->id] = str_repeat("&#8212; ", $level-1) . $name;
+	}
 		
 	if ($item->down)  $list = wpm_item_list ($item->down, $list, $level+1);
 	if ($item->side)  $list = wpm_item_list ($item->side, $list, $level);

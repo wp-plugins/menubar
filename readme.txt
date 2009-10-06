@@ -2,7 +2,7 @@
 Tags: dropdown, suckerfish, menu, menubar, navigation
 Requires at least: 2.6
 Tested up to: 2.8.4
-Stable tag: 4.0
+Stable tag: 4.1
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -10,9 +10,9 @@ Single and multi-level menus for your WordPress site, styled with customizable m
 
 With Menubar you can easily build and manage single and multi-level menus for your WordPress site.
 
-* Build your menus choosing menu items among Home, FrontPage, Category, CategoryTree, Page, PageTree, Heading, Post, SearchBox, External, in any combination
+* Build your menus choosing menu items among Home, FrontPage, Category, CategoryTree, Page, PageTree, Heading, Post, SearchBox, External, Custom, in any combination
 * Display a menu inserting in your theme, e.g. at the end of *header.php*, the line `<?php do_action ('wp_menubar', 'your_menu_name'); ?>`
-* Use the Menubar widget to display your menus in a widgetized area / sidebar (only with WordPress 2.8 or higher)
+* Use the *Menubar* widget to display your menus in a widgetized area / sidebar (only with WordPress 2.8 or higher)
 * Style your menus using Menubar templates - a few easily customizable templates are already available, and you can add new templates without changing the plugin code
 * Upgrade automatically to a newer Menubar version without losing your template customizations
 
@@ -24,7 +24,7 @@ See the [First installation procedure](http://www.dontdream.it/wp-menubar-3-docu
 
 == Frequently Asked Questions ==
 
-See the [WP Menubar 3 documentation](http://www.dontdream.it/wp-menubar-3-documentation).
+See the [WP Menubar documentation](http://www.dontdream.it/wp-menubar-3-documentation).
 
 == Screenshots ==
 
@@ -32,14 +32,18 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
+= 4.1 =
+* Improvements to the new template structure - older templates are supported as well
+* Added the Custom type to insert custom HTML in your menu (only with new templates)
+* The name of a menu item is automatically generated when the *Name* field is left blank (only with new templates)
 = 4.0 =
 * New template structure for better customization - old templates are supported as well
 * Added the SearchBox type to integrate a search box in your menubar (only with new templates)
-* Moved the Menubar admin page under the Appearance admin menu
+* Moved the *Menubar* admin page under the *Appearance* admin menu
 = 3.6 =
 * Improved the first installation procedure with more user-friendly messages
 = 3.5 =
-* Added the Menubar widget to display menus in a widgetized area (only with WordPress 2.8+)
+* Added the *Menubar* widget to display menus in a widgetized area (only with WordPress 2.8 or higher)
 = 3.4 =
 * Improved compatibility with the qTranslate plugin
 = 3.3 =

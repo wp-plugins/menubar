@@ -100,12 +100,15 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 	$delete = "<a href='" . wp_nonce_url ($url_delete, 'delete_' . $item->id) . 
 		"' class='delete'>" . __('Delete', 'wpm') . "</a>";
 
+	$selection = htmlspecialchars ($item->selection);
+	$name = $item->name? $item->name: wpm_default_name ($item->type, $item->selection);
+	
 	echo "<tr class=\"$class\">
 		<td align='center'>$up</td>
 		<td align='center'>$down</td>
-		<td>" . str_repeat("&#8212; ", $level) . "$item->name</td>
+		<td>" . str_repeat("&#8212; ", $level) . "$name</td>
 		<td>$item->type</td>
-		<td>$item->selection</td>
+		<td>$selection</td>
 		<td>$item->cssclass</td>
 		<td>$item->attributes</td>
 		<td align='center'>$edit</td>
@@ -227,6 +230,36 @@ function wpm_check_templates ()
 	if (!$tpfound)  return 2;
 
 	return 0;
+}
+
+function wpm_default_name ($type, $selection)
+{
+	switch ($type)
+	{
+	case 'Home':
+		return __('Blog');
+
+	case 'FrontPage':
+		return __('Start');
+
+	case 'Category':	
+		return get_cat_name ($selection);
+
+	case 'CategoryTree':
+		return ($name = $selection)? get_cat_name ($selection): __('Categories');
+
+	case 'Page':
+		return get_the_title ($selection);
+
+	case 'PageTree':
+		return ($name = $selection)? get_the_title ($selection): __('Pages');
+
+	case 'Post':
+		return get_the_title ($selection);
+
+	default:
+		return '';
+	}
 }
 
 wp_reset_vars (array ('submit', 'action', 'itemid', 'order', 'orderid', 'name', 'type', 
@@ -394,7 +427,6 @@ case 'edit':
 	include_once ('wpm-edit.php');
 	wpm_item_form ('edit', $menuid, $item);
 	include ('admin-footer.php');
-
 	exit;
 
 break;
