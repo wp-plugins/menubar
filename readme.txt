@@ -1,8 +1,8 @@
 === Menubar ===
-Tags: dropdown, suckerfish, menu, menubar, navigation
+Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
-Tested up to: 2.8.4
-Stable tag: 4.1
+Tested up to: 2.8.5
+Stable tag: 4.2
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -32,6 +32,9 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
+= 4.2 =
+* Added support for wp-config.php FORCE_SSL_ADMIN definition
+* Added support for the new Superfish template
 = 4.1 =
 * Improvements to the new template structure - older templates are supported as well
 * Added the Custom type to insert custom HTML in your menu (only with new templates)

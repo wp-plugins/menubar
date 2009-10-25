@@ -149,7 +149,7 @@ function wpm_out41 ($node_id, $html, $css)
 
 	$itemside = wpm_out41 ($item->side, $html, $css);
 	$output .= $itemside['output'];
-	$hilite = ($class == $selected) or $itemside['hilite'];
+	$hilite = ($class == $selected) || $itemside['hilite'];
 
 	return array ('output' => $output, 'hilite' => $hilite);
 }

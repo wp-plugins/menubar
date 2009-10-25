@@ -4,7 +4,7 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/wp-menubar-3-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 4.1
+Version: 4.2
 Author: andrea@dontdream.it
 Author URI: http://www.dontdream.it/
 */
@@ -26,23 +26,21 @@ Author URI: http://www.dontdream.it/
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-if (!defined ('WP_PLUGIN_URL'))
-	define ('WP_PLUGIN_URL', get_option ('siteurl'). '/wp-content/plugins');
-if (!defined ('WP_PLUGIN_DIR'))
-	define ('WP_PLUGIN_DIR', ABSPATH. 'wp-content/plugins' );
-
 global $wpm_options;
 $wpm_options = new stdClass;
 $wpm_options->admin_name	= 'Menubar';
-$wpm_options->menubar_dir	= '/menubar';
-$wpm_options->templates_dir	= '/menubar-templates';
+$wpm_options->menubar		= 'menubar';
+$wpm_options->templates		= 'menubar-templates';
+$wpm_options->menubar_url	= plugins_url ($wpm_options->menubar);
+$wpm_options->templates_url	= plugins_url ($wpm_options->templates);
+$wpm_options->templates_dir	= WP_PLUGIN_DIR. '/'. $wpm_options->templates;
 $wpm_options->admin_file	= 'menubar/wpm-admin.php';
-$wpm_options->form_action	= get_option ('siteurl'). '/wp-admin/themes.php?page='. $wpm_options->admin_file;
+$wpm_options->form_action	= admin_url ('themes.php?page='. $wpm_options->admin_file);
 $wpm_options->php_file    	= 'wpm3.php';
 $wpm_options->table_name  	= 'menubar3';
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '4.1';
+$wpm_options->wpm_version 	= '4.2';
 
 function wpm_readnode ($node_id)
 {
@@ -140,23 +138,23 @@ function wpm_include ($template, $css)
 {
 	global $wpm_options;
 
-	$url = WP_PLUGIN_URL . $wpm_options->templates_dir;
-	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
+	$url = $wpm_options->templates_url;
+	$root = $wpm_options->templates_dir;
 
 	if (!file_exists ("$root"))
-		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir not found!<br />\n<br />Please create that folder and install at least one Menubar template.<br />\n";
+		echo "<br /><b>WP Menubar error</b>:  Folder $root not found!<br />\n<br />Please create that folder and install at least one Menubar template.<br />\n";
 	elseif (!file_exists ("$root/$template"))
-		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir/$template not found!<br />\n";
+		echo "<br /><b>WP Menubar error</b>:  Folder $root/$template not found!<br />\n";
 	elseif ($template && !file_exists ("$root/$template/$wpm_options->php_file"))
-		echo "<br /><b>WP Menubar error</b>:  File $template/$wpm_options->php_file not found in wp-content/plugins$wpm_options->templates_dir!<br />\n";
+		echo "<br /><b>WP Menubar error</b>:  File $wpm_options->php_file not found in $root/$template!<br />\n";
 	elseif ($css && !file_exists ("$root/$template/$css"))
-		echo "<br /><b>WP Menubar error</b>:  File $template/$css not found in wp-content/plugins$wpm_options->templates_dir!<br />\n";
+		echo "<br /><b>WP Menubar error</b>:  File $css not found in $root/$template!<br />\n";
 	else
 	{
 		if ($template)
 			include_once ("$root/$template/$wpm_options->php_file");
 		if ($css)
-			echo '<link rel="stylesheet" href="'. "$url/$template/$css". '" type="text/css" media="screen" />' . "\n";
+			echo '<link rel="stylesheet" href="'. "$url/$template/$css". '" type="text/css" media="screen" />'. "\n";
 		return true;
 	}
 
@@ -177,15 +175,10 @@ function wpm_display ($menuname, $template='', $css='')
 	if ($css == '') $css = $menu->cssclass;
 
 	$version = $wpm_options->wpm_version;
-	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
 	$function = $wpm_options->function_name . $template; 
 
-	if (!file_exists ("$root"))
-		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir not found!<br />\n<br />Please create that folder and install at least one Menubar template.<br />\n";
-	elseif (!file_exists ("$root/$template"))
-		echo "<br /><b>WP Menubar error</b>:  Folder wp-content/plugins$wpm_options->templates_dir/$template not found!<br />\n";
-	elseif ($menu == '')
-		echo "<br /><b>WP Menubar error</b>:  Menu $menuname not found in database!<br />\n";
+	if ($menu == '')
+		echo "<br /><b>WP Menubar error</b>:  Menu '$menuname' not found! Please create a menu named '$menuname' and try again.<br />\n";
 	elseif ($template == '') 
 		echo "<br /><b>WP Menubar error</b>:  No template selected for menu $menuname!<br />\n";
 	elseif (!function_exists ($function))
@@ -302,6 +295,17 @@ function wpm_ajax ()
 	exit;
 }
 
+function wpm_init ()
+{
+	global $wpm_options;
+
+	$superfish_dir = $wpm_options->templates_dir. '/Superfish/superfish.js';
+	$superfish_url = $wpm_options->templates_url. '/Superfish/superfish.js';
+
+	if (file_exists ($superfish_dir))
+		wp_enqueue_script ('superfish', $superfish_url, array ('jquery'));
+}
+
 function wpm_scripts ()
 {
 }
@@ -310,6 +314,7 @@ register_activation_hook (__FILE__, 'wpm_create');
 add_action ('admin_menu', 'wpm_add_pages');
 add_action ('wp_ajax_menubar', 'wpm_ajax');
 
+add_action ('init', wpm_init);
 add_action ('wp_head', 'wpm_css', 10, 2);
 add_action ('wp_menubar', 'wpm_display', 10, 3);
 
