@@ -170,7 +170,7 @@ function wpm_order ($label, $name, $attr, $list, $selected, $action)
 function wpm_select ($label, $name, $list, $selected, $attr='', $comment='')
 {
 	global $wpm_options;
-	$url = WP_PLUGIN_URL . $wpm_options->menubar_dir;
+	$url = $wpm_options->menubar_url;
 
 		echo "<th width=\"100px\" scope=\"row\" align=\"left\" valign=\"top\">\n";
 			echo "<label for=\"$name\"> $label </label>\n";

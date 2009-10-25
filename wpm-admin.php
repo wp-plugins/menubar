@@ -76,7 +76,7 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 	
 	$class = ($class == "") ? "alternate" : "";
 
-	$url = WP_PLUGIN_URL . $wpm_options->menubar_dir;
+	$url = $wpm_options->menubar_url;
 
 	$url_up		= $wpm_options->form_action . 
 		'&amp;action=swap&amp;menuid=' . $menuid . '&amp;itemid=' . $prev_id;
@@ -91,9 +91,9 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 		'&amp;action=delete&amp;menuid=' . $menuid . '&amp;itemid=' . $item->id; 
 
 	$up   = $prev_id? "<a href='$url_up' class='edit' title='".__('move up','wpm')."'>
-				<img src='$url/up.gif' /></a>": "<img src='$url/up.gif' />";
+				<img src='$url/up.gif' /></a>": "";
 	$down = $next_id? "<a href='$url_down' class='edit' title='".__('move down','wpm')."'>
-				<img src='$url/down.gif' /></a>": "<img src='$url/down.gif' />";
+				<img src='$url/down.gif' /></a>": "";
 
 	$edit = "<a href='$url_edit' class='edit'>" . __('Edit', 'wpm') . "</a>";
 	
@@ -149,7 +149,7 @@ function wpm_template_dropdown ($active_template, $echo=true)
 	global $wpm_options;
 
 	$templates = array();
-	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
+	$root = $wpm_options->templates_dir;
 
 	$folders = @ dir ($root);
 	if ($folders)
@@ -222,7 +222,7 @@ function wpm_check_templates ()
 {
 	global $wpm_options;
 
-	$root = WP_PLUGIN_DIR . $wpm_options->templates_dir;
+	$root = $wpm_options->templates_dir;
 	
 	if (!file_exists ("$root"))  return 1;
 	
