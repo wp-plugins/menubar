@@ -106,12 +106,12 @@ $typelist = array (
 
 <table class="editform">
 
-<tr><?php if (count($item_list) > $mincount)
-		  wpm_order (__('Order:', 'wpm'), 'orderid', '', $item_list, $selected, $action); ?></tr>
-		  
-<tr><?php wpm_input  (__('Name:', 'wpm'), 'name', $item->name, '20', __('(e.g. Home, News)', 'wpm')); ?></tr>
+<?php if (count($item_list) > $mincount)
+		wpm_order (__('Order:', 'wpm'), 'orderid', '', $item_list, $selected, $action); ?>
 
-<tr><?php wpm_select (__('Type:', 'wpm'), 'type', $typelist, $item->type); ?></tr>
+<?php wpm_input  (__('Name:', 'wpm'), 'name', $item->name, '20', __('(e.g. Home, News)', 'wpm')); ?>
+
+<?php wpm_select (__('Type:', 'wpm'), 'type', $typelist, $item->type); ?>
 
 </table>
 
@@ -124,8 +124,8 @@ $typelist = array (
 
 <table class="editform">
 
-<tr><?php wpm_input  (__('CSS class:', 'wpm'), 'cssclass', $item->cssclass, '20', __('(optional CSS class of this menu item)', 'wpm')); ?></tr>
-<tr><?php wpm_input  (__('Attributes:', 'wpm'), 'attributes', $item->attributes, '20', __('(e.g. target="_blank", title="click me!")', 'wpm')); ?></tr>
+<?php wpm_input  (__('CSS class:', 'wpm'), 'cssclass', $item->cssclass, '20', __('(optional CSS class of this menu item)', 'wpm')); ?>
+<?php wpm_input  (__('Attributes:', 'wpm'), 'attributes', $item->attributes, '20', __('(e.g. target="_blank", title="click me!")', 'wpm')); ?>
 	
 </table>
 
@@ -139,7 +139,7 @@ $typelist = array (
 
 function wpm_order ($label, $name, $attr, $list, $selected, $action)
 {
-		echo "<th width=\"100px\" scope=\"row\" align=\"left\" valign=\"top\">\n";
+		echo "<tr><th width=\"100px\" scope=\"row\" align=\"left\" valign=\"top\">\n";
 			echo "<label for=\"$name\"> $label </label>\n";
 		echo "</th>\n";
 		echo "<td>\n";		
@@ -162,7 +162,7 @@ function wpm_order ($label, $name, $attr, $list, $selected, $action)
  				echo "> $caption &nbsp; </option>\n";
 			}
 			echo "</select>\n";
-		echo "</td>\n";
+		echo "</td></tr>\n";
 
 	return true;
 }
@@ -172,7 +172,7 @@ function wpm_select ($label, $name, $list, $selected, $attr='', $comment='')
 	global $wpm_options;
 	$url = $wpm_options->menubar_url;
 
-		echo "<th width=\"100px\" scope=\"row\" align=\"left\" valign=\"top\">\n";
+		echo "<tr><th width=\"100px\" scope=\"row\" align=\"left\" valign=\"top\">\n";
 			echo "<label for=\"$name\"> $label </label>\n";
 		echo "</th>\n";
 		echo "<td>\n";		
@@ -187,7 +187,7 @@ function wpm_select ($label, $name, $list, $selected, $attr='', $comment='')
 			
 		echo "<img id=\"{$name}spinner\" style=\"display: none;\" src=\"$url/spinner.gif\" />";
 		echo "$comment\n";
-		echo "</td>\n";
+		echo "</td></tr>\n";
 
 	return true;
 }
@@ -196,13 +196,13 @@ function wpm_input ($label, $name, $value, $size, $comment)
 {
 	$value = attribute_escape ($value);
 
-		echo "<th width=\"100px\" scope=\"row\" align=\"left\" valign=\"top\">\n";
+		echo "<tr><th width=\"100px\" scope=\"row\" align=\"left\" valign=\"top\">\n";
 			echo "<label for=\"$name\"> $label </label>\n";
 		echo "</th>\n";
 		echo "<td>\n";
 			echo "<input name=\"$name\" id=\"$name\" type=\"text\" value=\"$value\" size=\"$size\" />\n";
 			echo "$comment\n";
-		echo "</td>\n";
+		echo "</td></tr>\n";
 		
 	return true;
 }
