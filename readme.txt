@@ -33,9 +33,9 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 == Changelog ==
 
 = 4.3 =
-* Fixed a bug affecting the *Add Menu Item* and *Edit Menu Item* forms in Internet Explorer
+* Fixed a bug affecting the *Add Menu Item* and *Edit Menu Item* forms in IE6 and IE7
 = 4.2 =
-* Added support for wp-config.php FORCE_SSL_ADMIN definition
+* Added support for wp-config.php FORCE\_SSL\_ADMIN definition
 * Added support for the new Superfish template
 = 4.1 =
 * Improvements to the new template structure - older templates are supported as well
