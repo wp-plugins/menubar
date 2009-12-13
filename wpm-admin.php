@@ -9,18 +9,12 @@ jQuery(document).ready(function($) {
 
 <?php
 
-include ('wpm-tree.php');
+include_once ('wpm-tree.php');
 
 function wpm_get_default_menu ()
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
-	$sql = "SELECT * FROM $table_name
-		WHERE type = '$wpm_options->menu_type' ORDER BY 'id' LIMIT 1";
-
-	$menu = $wpdb->get_row ($sql);
-	return $menu->id;
+	$menus = wpm_get_menus ();
+	return $menus[0]->id;
 }
 
 function wpm_list_menu_items ($menuid)
@@ -123,13 +117,7 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 
 function wpm_menu_dropdown ($menuid)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
-	$sql = "SELECT id, name FROM $table_name
-		WHERE type = '$wpm_options->menu_type'";
-		
-	$menus = $wpdb->get_results ($sql);
+	$menus = wpm_get_menus ();
 
 	$out = "<select name='menuid' style='width: 10em;' >\n";
 
@@ -297,8 +285,8 @@ switch ($submit)
 {
 case __('Reset Menubar', 'wpm'):  
 
-	wpm_drop();
-	wpm_create();
+	wpm_drop_tree ();
+	wpm_create_tree ();
 	$msg = 6; 
 
 break;
@@ -544,7 +532,7 @@ if ($missingtp)  $msg = $missingtp + 14;
 <p class="submit">
 <input type="submit" name="submit" value="<?php _e('Reset Menubar', 'wpm'); ?>"  />
 <strong>
-<?php _e('Clean up the Menubar DB table', 'wpm'); ?>
+<?php _e('Clean up the Menubar data', 'wpm'); ?>
 </strong>
 </p>
 </form>
