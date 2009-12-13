@@ -4,7 +4,7 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/wp-menubar-3-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 4.3
+Version: 4.4
 Author: andrea@dontdream.it
 Author URI: http://www.dontdream.it/
 */
@@ -38,66 +38,12 @@ $wpm_options->admin_file	= 'menubar/wpm-admin.php';
 $wpm_options->form_action	= admin_url ('themes.php?page='. $wpm_options->admin_file);
 $wpm_options->php_file    	= 'wpm3.php';
 $wpm_options->table_name  	= 'menubar3';
+$wpm_options->option_name  	= 'menubar';
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '4.3';
+$wpm_options->wpm_version 	= '4.4';
 
-function wpm_readnode ($node_id)
-{
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
-	$sql = "SELECT * FROM $table_name WHERE id = '$node_id'";
-	$node = $wpdb->get_row ($sql);
-
-	return $node;
-}
-
-function wpm_create ()
-{
-	global $wpdb, $wpm_options;
-
-	$charset_collate = '';
-
-	if (version_compare (mysql_get_server_info (), '4.1.0', '>='))
-	{
-		if (!empty ($wpdb->charset))
-			$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
-		if (!empty ($wpdb->collate))
-			$charset_collate .= " COLLATE $wpdb->collate";
-	}
-
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
-	$sql = "CREATE TABLE $table_name (
-  		`id`        	bigint(20)   NOT NULL auto_increment,
-  		`name`      	varchar(255) NOT NULL default '',
-  		`type`      	varchar(255) NOT NULL default '',
-  		`selection` 	varchar(255) NOT NULL default '',
-  		`cssclass`		varchar(255) NOT NULL default '',
-  		`attributes`	varchar(255) NOT NULL default '',
-  		`options`		longtext     NOT NULL default '',
-		`side`      	bigint(20)   NOT NULL default '0',
-  		`down`      	bigint(20)   NOT NULL default '0',
-  		PRIMARY KEY (`id`)
-		) $charset_collate; ";
-
-	require_once (ABSPATH . 'wp-admin/includes/upgrade.php');
-	dbDelta ($sql);
-
-	return true;
-}
-
-function wpm_drop ()
-{
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
-	$sql = "DROP TABLE $table_name";
-
-	$wpdb->query ($sql);
-	return true;
-}
+include_once ('wpm-tree.php');
 
 function wpm_add_pages ()
 {
@@ -113,13 +59,9 @@ function wpm_add_pages ()
 
 function wpm_css ($template='', $css='')
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
+	global $wpm_options;
 
-	$sql = "SELECT DISTINCT selection, cssclass FROM $table_name 
-			WHERE type = '$wpm_options->menu_type'";
- 
-	$rows = $wpdb->get_results ($sql);
+	$rows = wpm_get_templates ();
 	
 	echo "\n<!-- WP Menubar $wpm_options->wpm_version: start CSS -->\n"; 
 	
@@ -163,13 +105,9 @@ function wpm_include ($template, $css)
 
 function wpm_display ($menuname, $template='', $css='')
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
+	global $wpm_options;
 
-	$sql = "SELECT * FROM $table_name
-		WHERE name = '$menuname' AND type = '$wpm_options->menu_type'";
-		
-	$menu = $wpdb->get_row ($sql);
+	$menu = wpm_get_menu ($menuname);
 
 	if ($template == '') $template = $menu->selection;
 	if ($css == '') $css = $menu->cssclass;
@@ -299,6 +237,8 @@ function wpm_init ()
 {
 	global $wpm_options;
 
+	wpm_init_tree ();
+	
 	$superfish_dir = $wpm_options->templates_dir. '/Superfish/superfish.js';
 	$superfish_url = $wpm_options->templates_url. '/Superfish/superfish.js';
 
@@ -310,11 +250,11 @@ function wpm_scripts ()
 {
 }
 
-register_activation_hook (__FILE__, 'wpm_create');
+// register_activation_hook (__FILE__, 'wpm_activate');
 add_action ('admin_menu', 'wpm_add_pages');
 add_action ('wp_ajax_menubar', 'wpm_ajax');
 
-add_action ('init', wpm_init);
+add_action ('init', 'wpm_init');
 add_action ('wp_head', 'wpm_css', 10, 2);
 add_action ('wp_menubar', 'wpm_display', 10, 3);
 
