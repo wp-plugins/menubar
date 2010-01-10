@@ -132,17 +132,19 @@ function wpm_out41 ($node_id, $html, $css)
 
 	if ($process)
 	{
-		$pattern = array ('/%attr/', '/%class/', '/%home/', '/%id/', '/%items/', 
+		$pattern = array ('/%attr/', '/%class/', '/%home/', '/%id/', '/%imageurl/', '/%items/', 
 			'/%menuclass/', '/%name/', '/%selection/', '/%url/',
-			'/%list/', '/%submit/');
-		$replacement = array ($attributes, $class, $home, $item->id, $items, 
+			'/%list/', '/%submit/', '/%image/');
+		$replacement = array ($attributes, $class, $home, $item->id, $item->imageurl, $items, 
 			$menuclass, $name, $selection, $url);
 
 		$list = $items? preg_replace ($pattern, $replacement, $html['list']): '';
 		$submit = $selection? preg_replace ($pattern, $replacement, $html['submit']): '';
+		$image = $item->imageurl? preg_replace ($pattern, $replacement, $html['image']): '';
 		
 		$replacement[] = $list;
 		$replacement[] = $submit;
+		$replacement[] = $image;
 		
 		$output = preg_replace ($pattern, $replacement, $html['items'][$item->type]);
 	}

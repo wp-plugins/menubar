@@ -2,7 +2,7 @@
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
 Tested up to: 2.9.1
-Stable tag: 4.4
+Stable tag: 4.5
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -32,6 +32,9 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
+= 4.5 =
+* Added support for icons in menu items (only with new templates)
+* Fixed a bug affecting single and double quote characters that were incorrectly escaped 
 = 4.4 =
 * Improved performance moving the Menubar data from a DB table to a serialized option, so just a single DB call per page is needed
 = 4.3 =
@@ -54,7 +57,7 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 = 3.4 =
 * Improved compatibility with the qTranslate plugin
 = 3.3 =
-* Fixed a bug with menu names containing a space, and a bug with a special menu reordering case
+* Fixed a bug affecting menu names containing a space, and a bug in a special menu reordering case
 = 3.2 =
 * Added more options to easily rearrange the order of your menu items
 = 3.1 =
