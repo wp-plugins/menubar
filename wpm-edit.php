@@ -1,8 +1,10 @@
-<?php 
+<?php
 
 function wpm_item_form ($action, $menuid, $item=null)
 {
 	global $wpm_options;
+
+	$menu = wpm_read_node ($menuid);
 ?>
 
 <script type='text/javascript'>
@@ -109,7 +111,9 @@ $typelist = array (
 <?php if (count($item_list) > $mincount)
 		wpm_order (__('Order:', 'wpm'), 'orderid', '', $item_list, $selected, $action); ?>
 
-<?php wpm_input  (__('Name:', 'wpm'), 'name', $item->name, '20', __('(e.g. Home, News)', 'wpm')); ?>
+<?php wpm_input (__('Name:', 'wpm'), 'name', $item->name, 20, __('(e.g. Home, News)', 'wpm')); ?>
+<?php if ($menu->features['images'] == true)
+		wpm_input (__('Image:', 'wpm'), 'imageurl', $item->imageurl, 40, __('(optional image URL)', 'wpm')); ?>
 
 <?php wpm_select (__('Type:', 'wpm'), 'type', $typelist, $item->type); ?>
 
@@ -124,8 +128,8 @@ $typelist = array (
 
 <table class="editform">
 
-<?php wpm_input  (__('CSS class:', 'wpm'), 'cssclass', $item->cssclass, '20', __('(optional CSS class of this menu item)', 'wpm')); ?>
-<?php wpm_input  (__('Attributes:', 'wpm'), 'attributes', $item->attributes, '20', __('(e.g. target="_blank", title="click me!")', 'wpm')); ?>
+<?php wpm_input  (__('CSS class:', 'wpm'), 'cssclass', $item->cssclass, 20, __('(optional CSS class of this menu item)', 'wpm')); ?>
+<?php wpm_input  (__('Attributes:', 'wpm'), 'attributes', $item->attributes, 20, __('(e.g. target="_blank", title="click me!")', 'wpm')); ?>
 	
 </table>
 
@@ -192,7 +196,7 @@ function wpm_select ($label, $name, $list, $selected, $attr='', $comment='')
 	return true;
 }
 
-function wpm_input ($label, $name, $value, $size, $comment)
+function wpm_input ($label, $name, $value, $size, $comment='')
 {
 	$value = attribute_escape ($value);
 
@@ -200,7 +204,7 @@ function wpm_input ($label, $name, $value, $size, $comment)
 			echo "<label for=\"$name\"> $label </label>\n";
 		echo "</th>\n";
 		echo "<td>\n";
-			echo "<input name=\"$name\" id=\"$name\" type=\"text\" value=\"$value\" size=\"$size\" />\n";
+			echo "<input id=\"$name\" name=\"$name\" type=\"text\" value=\"$value\" size=\"$size\" />\n";
 			echo "$comment\n";
 		echo "</td></tr>\n";
 		
@@ -237,19 +241,19 @@ function wpm_typeargs ($type, $item=null)
 		break;
 
 	case 'Post':
-		wpm_input  (__('Post ID:', 'wpm'), 'Post', $item->selection, '20', '');
+		wpm_input  (__('Post ID:', 'wpm'), 'Post', $item->selection, 20);
 		break;
 
 	case 'SearchBox':
-		wpm_input  (__('Button:', 'wpm'), 'SearchBox', $item->selection, '20', __('(text for the optional Submit button)', 'wpm'));
+		wpm_input  (__('Button:', 'wpm'), 'SearchBox', $item->selection, 20, __('(text for the optional Submit button)', 'wpm'));
 		break;
 
 	case 'External':
-		wpm_input  (__('URL:', 'wpm'), 'External', $item->selection, '50', '');
+		wpm_input  (__('URL:', 'wpm'), 'External', $item->selection, 50);
 		break;
 
 	case 'Custom':
-		wpm_input  (__('HTML:', 'wpm'), 'Custom', $item->selection, '50', '');
+		wpm_input  (__('HTML:', 'wpm'), 'Custom', $item->selection, 50);
 		break;
 	}
 }

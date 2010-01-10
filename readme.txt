@@ -1,8 +1,8 @@
 === Menubar ===
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
-Tested up to: 2.8.6
-Stable tag: 4.3
+Tested up to: 2.9.1
+Stable tag: 4.5
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -32,10 +32,15 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
+= 4.5 =
+* Added support for icons in menu items (only with new templates)
+* Fixed a bug affecting single and double quote characters that were incorrectly escaped 
+= 4.4 =
+* Improved performance moving the Menubar data from a DB table to a serialized option, so just a single DB call per page is needed
 = 4.3 =
 * Fixed a bug affecting the *Add Menu Item* and *Edit Menu Item* forms in IE6 and IE7
 = 4.2 =
-* Added support for wp-config.php FORCE\_SSL\_ADMIN definition
+* Added support for the wp-config.php FORCE\_SSL\_ADMIN definition
 * Added support for the new Superfish template
 = 4.1 =
 * Improvements to the new template structure - older templates are supported as well
@@ -52,7 +57,7 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 = 3.4 =
 * Improved compatibility with the qTranslate plugin
 = 3.3 =
-* Fixed a bug with menu names containing a space, and a bug with a special menu reordering case
+* Fixed a bug affecting menu names containing a space, and a bug in a special menu reordering case
 = 3.2 =
 * Added more options to easily rearrange the order of your menu items
 = 3.1 =

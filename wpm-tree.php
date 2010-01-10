@@ -1,5 +1,50 @@
 <?php
 
+function wpm_init_tree ()
+{
+	global $wpm_tree, $wpm_options;
+
+	$wpm_tree = get_option ($wpm_options->option_name);
+	if ($wpm_tree == false)
+	{
+		wpm_create_tree ();
+		if (wpm_table_exists())  wpm_move_tree ();
+	}
+
+	return true;
+}
+
+function wpm_readnode ($node_id)
+{
+	global $wpm_tree;
+	
+	$node = $wpm_tree->nodes[$node_id];
+	return $node;
+}
+
+function wpm_create_tree ()
+{
+	global $wpm_tree, $wpm_options;
+
+	$wpm_tree->version = '1.0';
+	$wpm_tree->ffree = 1;
+	$wpm_tree->nodes = array ();
+	
+	add_option ($wpm_options->option_name, $wpm_tree);
+
+	return true;
+}
+
+function wpm_drop_tree ()
+{
+	global $wpm_tree, $wpm_options;
+
+	delete_option ($wpm_options->option_name);
+	$wpm_tree = null;
+	
+	return true;
+}
+
 function wpm_create_child ($parent_id, $node_values)
 {
 	$node = _wpm_create_node ($node_values);
@@ -60,53 +105,43 @@ function wpm_move_before ($before_id, $node_id)
 
 function wpm_read_node ($node_id)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
-	$sql = "SELECT * FROM $table_name WHERE id = '$node_id'";
-	$node = $wpdb->get_row ($sql);
-
+	$node = wpm_readnode ($node_id);
 	return $node;
 }
 
 function wpm_update_node ($node)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
+	global $wpm_tree, $wpm_options;
 
-	$sql = "UPDATE $table_name SET 
-		name = '$node->name', 
-		type = '$node->type', 
-		selection = '$node->selection',
-		cssclass = '$node->cssclass',
-		attributes = '$node->attributes' 
-		WHERE id = '$node->id'";
+	$side = $wpm_tree->nodes[$node->id]->side;
+	$down = $wpm_tree->nodes[$node->id]->down;
 
-	$wpdb->query ($sql);
+	$wpm_tree->nodes[$node->id] = $node;
+
+	$wpm_tree->nodes[$node->id]->side = $side;
+	$wpm_tree->nodes[$node->id]->down = $down;
+
+	update_option ($wpm_options->option_name, $wpm_tree);
 	return true;
 }
 
 function wpm_delete_node ($node_id, $safe=true)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-	
+	global $wpm_tree, $wpm_options;
+
 	$node = wpm_read_node ($node_id);	
 	if ($safe && $node->down)  return false;
 	
 	_wpm_unlink_node ($node_id);
 	
-	$sql = "DELETE FROM $table_name WHERE id = '$node_id'";	
-	$wpdb->query ($sql);
+	$wpm_tree->nodes[$node_id] = null;
+	update_option ($wpm_options->option_name, $wpm_tree);
 	
 	return true;
 }
 
 function wpm_swap_node ($node_id)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
 	$node = wpm_read_node ($node_id);
 	if ($node->side == 0)  return false;
 	
@@ -118,44 +153,41 @@ function wpm_swap_node ($node_id)
 
 function _wpm_create_node ($node_values)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
+	global $wpm_tree, $wpm_options;
 
-	$sql = "INSERT INTO $table_name
-		 (name, type, selection, cssclass, attributes, side, down) VALUES 
-		 ('$node_values->name',
-		  '$node_values->type', '$node_values->selection',
-		  '$node_values->cssclass', '$node_values->attributes', '0', '0')";
-		 
-	$wpdb->query ($sql);
+	$id = $wpm_tree->ffree++;
 	
-	$node = wpm_read_node ($wpdb->insert_id);
+	$wpm_tree->nodes[$id] = $node_values;
+
+	$wpm_tree->nodes[$id]->id = $id;
+	$wpm_tree->nodes[$id]->side = 0;
+	$wpm_tree->nodes[$id]->down = 0;
+	
+	update_option ($wpm_options->option_name, $wpm_tree);
+
+	$node = wpm_read_node ($id);
 	return $node;
 }
 
 function _wpm_update_links ($node)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
+	global $wpm_tree, $wpm_options;
 
-	$sql = "UPDATE $table_name SET 
-		side = '$node->side', 
-		down = '$node->down'
-		WHERE id = '$node->id'";
+	$wpm_tree->nodes[$node->id]->side = $node->side;
+	$wpm_tree->nodes[$node->id]->down = $node->down;
+	update_option ($wpm_options->option_name, $wpm_tree);
 
-	$wpdb->query ($sql);
 	return $node;
 }
 
 function _wpm_find_pointer ($node_id)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
+	global $wpm_tree;
 
-	$sql = "SELECT * FROM $table_name WHERE (side = '$node_id' OR down = '$node_id')";
-	$item = $wpdb->get_row ($sql);
+	foreach ($wpm_tree->nodes as $item)
+		if ($item->side == $node_id || $item->down == $node_id)  return $item;  
 	
-	return $item;		
+	return null;		
 }
 
 function _wpm_unlink_node ($node_id)
@@ -238,4 +270,107 @@ function _wpm_is_descendant ($node_id, $parent_id, $level=0)
 	return false;
 }
 
+function _wpm_cmpid ($a, $b)
+{
+	if ($a->id == $b->id)  return 0;
+	return ($a->id < $b->id) ? -1 : 1;
+}
+
+function wpm_get_menus ()
+{
+	global $wpm_tree, $wpm_options;
+
+	$menus = array ();
+	foreach ((array)$wpm_tree->nodes as $item)
+		if ($item->type == $wpm_options->menu_type)  $menus[] = $item;
+
+	usort ($menus, '_wpm_cmpid');
+
+	return $menus;
+}
+
+function wpm_get_menu ($menuname)
+{
+	global $wpm_tree, $wpm_options;
+
+	foreach ((array)$wpm_tree->nodes as $item)
+		if ($item->name == $menuname && $item->type == $wpm_options->menu_type)  return $item;
+
+	return null;
+}
+
+function wpm_get_templates ()
+{
+	global $wpm_tree, $wpm_options;
+
+	$menus = array ();
+	$stored = array ();
+	foreach ((array)$wpm_tree->nodes as $item)
+		if ($item->type == $wpm_options->menu_type)
+		{
+			$template = $item->selection . $item->cssclass;
+			if (!in_array ($template, $stored))
+			{
+				$menus[] = $item;
+				$stored[] = $template;
+			}
+		}
+	
+	return $menus;
+}
+
+function wpm_move_tree ()
+{
+	$menus = wpm_old_get_menus ();
+	foreach ($menus as $menu)
+		wpm_move_item ($menu->id, 0);
+}
+
+function wpm_move_item ($old_item_id, $new_parent_id)
+{
+	if ($old_item_id == 0)  return false;
+	$old_item = wpm_old_read_node ($old_item_id);
+
+	$new_item = wpm_create_child ($new_parent_id, unserialize(serialize($old_item)));
+	
+	wpm_move_item ($old_item->down, $new_item->id);
+	wpm_move_item ($old_item->side, $new_parent_id);
+
+	return true;
+}
+
+function wpm_table_exists ()
+{
+	global $wpdb, $wpm_options;
+	$table_name = $wpdb->prefix . $wpm_options->table_name;
+
+	$sql = "SHOW TABLES LIKE '$table_name'";
+	$tables = $wpdb->get_results ($sql);
+	$count = count ($tables);
+		
+	return $count? true: false;
+}
+
+function wpm_old_get_menus ()
+{
+	global $wpdb, $wpm_options;
+	$table_name = $wpdb->prefix . $wpm_options->table_name;
+
+	$sql = "SELECT id, name FROM $table_name
+		WHERE type = '$wpm_options->menu_type'";
+		
+	$menus = $wpdb->get_results ($sql);
+	return $menus;
+}
+
+function wpm_old_read_node ($node_id)
+{
+	global $wpdb, $wpm_options;
+	$table_name = $wpdb->prefix . $wpm_options->table_name;
+
+	$sql = "SELECT * FROM $table_name WHERE id = '$node_id'";
+	$node = $wpdb->get_row ($sql);
+
+	return $node;
+}
 ?>

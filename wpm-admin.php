@@ -9,18 +9,12 @@ jQuery(document).ready(function($) {
 
 <?php
 
-include ('wpm-tree.php');
+include_once ('wpm-tree.php');
 
 function wpm_get_default_menu ()
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
-	$sql = "SELECT * FROM $table_name
-		WHERE type = '$wpm_options->menu_type' ORDER BY 'id' LIMIT 1";
-
-	$menu = $wpdb->get_row ($sql);
-	return $menu->id;
+	$menus = wpm_get_menus ();
+	return $menus[0]->id;
 }
 
 function wpm_list_menu_items ($menuid)
@@ -73,6 +67,8 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 
 	$item = wpm_read_node ($item_id);
 	$next_id = $item->side;
+
+	$menu = wpm_read_node ($menuid);
 	
 	$class = ($class == "") ? "alternate" : "";
 
@@ -92,9 +88,13 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 
 	$up   = $prev_id? "<a href='$url_up' class='edit' title='".__('move up','wpm')."'>
 				<img src='$url/up.gif' /></a>": "";
+				
 	$down = $next_id? "<a href='$url_down' class='edit' title='".__('move down','wpm')."'>
 				<img src='$url/down.gif' /></a>": "";
 
+	$image = ($menu->features['images'] == true && $item->imageurl)? 
+				"<img src=\"$item->imageurl\" height=\"16\" width=\"16\" />": '';
+	
 	$edit = "<a href='$url_edit' class='edit'>" . __('Edit', 'wpm') . "</a>";
 	
 	$delete = "<a href='" . wp_nonce_url ($url_delete, 'delete_' . $item->id) . 
@@ -106,7 +106,7 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 	echo "<tr class=\"$class\">
 		<td align='center'>$up</td>
 		<td align='center'>$down</td>
-		<td>" . str_repeat("&#8212; ", $level) . "$name</td>
+		<td>" . str_repeat("&#8212; ", $level) . "$image $name</td>
 		<td>$item->type</td>
 		<td>$selection</td>
 		<td>$item->cssclass</td>
@@ -123,13 +123,7 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 
 function wpm_menu_dropdown ($menuid)
 {
-	global $wpdb, $wpm_options;
-	$table_name = $wpdb->prefix . $wpm_options->table_name;
-
-	$sql = "SELECT id, name FROM $table_name
-		WHERE type = '$wpm_options->menu_type'";
-		
-	$menus = $wpdb->get_results ($sql);
+	$menus = wpm_get_menus ();
 
 	$out = "<select name='menuid' style='width: 10em;' >\n";
 
@@ -262,11 +256,26 @@ function wpm_default_name ($type, $selection)
 	}
 }
 
-wp_reset_vars (array ('submit', 'action', 'itemid', 'order', 'orderid', 'name', 'type', 
-			'Category', 'CategoryTree', 'Page', 'PageTree', 'Post', 'External',
+function wpm_get_vars ($vars)
+{
+	foreach ($vars as $var)
+	{
+		global $$var;
+
+		if (empty ($_POST["$var"]))
+			$$var = empty ($_GET["$var"])? '': $_GET["$var"];
+		else
+			$$var = $_POST["$var"];
+		
+		$$var = stripslashes ($$var);
+	}
+}
+
+wpm_get_vars (array ('submit', 'action', 'itemid', 'order', 'orderid', 'name', 'imageurl', 
+			'type', 'Category', 'CategoryTree', 'Page', 'PageTree', 'Post', 'External',
 			'SearchBox', 'Custom',
 			'cssclass', 'attributes', 'menuid', 'menuname', 'template'));
-	
+
 switch ($type)
 {
 case 'Home':
@@ -297,8 +306,8 @@ switch ($submit)
 {
 case __('Reset Menubar', 'wpm'):  
 
-	wpm_drop();
-	wpm_create();
+	wpm_drop_tree ();
+	wpm_create_tree ();
 	$msg = 6; 
 
 break;
@@ -335,6 +344,12 @@ case __('Update Menu', 'wpm'):
 	$wpm_menu->selection = $list[0];
 	$wpm_menu->cssclass = $list[1];
 
+	wpm_include ($wpm_menu->selection, '');
+	$features = 'wpm_features_' . $wpm_menu->selection;
+	
+	global $$features;
+	$wpm_menu->features = $$features;
+	
 	if (wpm_update_node ($wpm_menu))
 		$msg = 9; 
 	else
@@ -360,6 +375,12 @@ case __('Add Menu', 'wpm'):
 	$wpm_menu->cssclass = $list[1];
 	$wpm_menu->attributes = '';
 	$wpm_menu->type = $wpm_options->menu_type;
+
+	wpm_include ($wpm_menu->selection, '');
+	$features = 'wpm_features_' . $wpm_menu->selection;
+	
+	global $$features;
+	$wpm_menu->features = $$features;
 	
 	$wpm_menu = wpm_create_child (0, $wpm_menu);
 	
@@ -383,7 +404,11 @@ case 'add':
 	check_admin_referer ('add');
 
 	$wpm_item = new stdClass;
+	$wpm_menu = wpm_read_node ($menuid);
+	
 	$wpm_item->name = $name;
+	if ($wpm_menu->features['images'] == true)
+		$wpm_item->imageurl = $imageurl;
 	$wpm_item->type = $type;
 	$wpm_item->selection = $selection;
 	$wpm_item->cssclass = $cssclass;
@@ -434,8 +459,12 @@ case 'update':
 
 	check_admin_referer ('update_' . $itemid);
 
-	$wpm_item = wpm_read_node ($itemid);	
+	$wpm_item = wpm_read_node ($itemid);
+	$wpm_menu = wpm_read_node ($menuid);
+	
 	$wpm_item->name = $name;
+	if ($wpm_menu->features['images'] == true)
+		$wpm_item->imageurl = $imageurl;
 	$wpm_item->type = $type;
 	$wpm_item->selection = $selection;
 	$wpm_item->cssclass = $cssclass;
@@ -493,7 +522,7 @@ if ($missingtp)  $msg = $missingtp + 14;
 <div id="icon-plugins" class="icon32">
 <br/>
 </div>
-<h2><?php _e('Manage Menubar', 'wpm'); ?> </h2>
+<h2><?php _e('Menubar', 'wpm'); ?> </h2>
 <br/>
 
 <?php if ($msg) : ?>
@@ -544,7 +573,7 @@ if ($missingtp)  $msg = $missingtp + 14;
 <p class="submit">
 <input type="submit" name="submit" value="<?php _e('Reset Menubar', 'wpm'); ?>"  />
 <strong>
-<?php _e('Clean up the Menubar DB table', 'wpm'); ?>
+<?php _e('Clean up the Menubar data', 'wpm'); ?>
 </strong>
 </p>
 </form>
