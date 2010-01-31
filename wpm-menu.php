@@ -2,7 +2,11 @@
 
 function wpm_out41 ($node_id, $html, $css)
 {
+	global $wp_query;
+
 	if ($node_id == 0)  return array ('output' => '', 'hilite' => false);
+
+	wpm_append_nodes ($node_id);
 	$item = wpm_readnode ($node_id);
 
 	$itemdown = wpm_out41 ($item->down, $html, $css);
@@ -36,7 +40,6 @@ function wpm_out41 ($node_id, $html, $css)
 			$url = $pfp? get_page_link ($pfp): $nourl;
 		else
 			$url = $home;
-		if ($name == '')  $name = __('Blog');
 		break;
 
 	case 'FrontPage':
@@ -52,10 +55,21 @@ function wpm_out41 ($node_id, $html, $css)
 			if (is_home())  $class = $selected;
 		}
 		$url = $home;
-		if ($name == '')  $name = __('Start');
 		break;
 
 	case 'Heading':
+		$url = $nourl;
+		break;
+
+	case 'Tag':
+		$q_obj = $wp_query->get_queried_object ();
+		if ($wp_query->is_tag 
+			&& $q_obj->term_id == $item->selection)  $class = $selected;   
+
+		$url = get_tag_link ($item->selection);
+		break;
+
+	case 'TagList':
 		$url = $nourl;
 		break;
 
@@ -67,7 +81,6 @@ function wpm_out41 ($node_id, $html, $css)
 				$class = $selected;
 
 		$url = get_category_link ($item->selection);
-		if ($name == '')  $name = get_cat_name ($selection);
 		break;
 
 	case 'CategoryTree':
@@ -77,7 +90,8 @@ function wpm_out41 ($node_id, $html, $css)
 			if (is_category($child) or (is_single() and in_category($child))) 
 				$class = $selected;
 
-		$items = wp_list_categories ('echo=0&title_li=&child_of='.$item->selection); 
+		$args = "echo=0&title_li=&child_of={$item->selection}&depth={$item->depth}";		
+		$items = wp_list_categories ($args);
 		if ($items == '<li>'. __('No categories'). '</li>')  $items = '';
 
 		$pattern = '@\<li([^>]*)>\<a([^>]*)>(.*?)\<\/a>@i';
@@ -85,34 +99,33 @@ function wpm_out41 ($node_id, $html, $css)
 		if ($replacement)  $items = preg_replace ($pattern, $replacement, $items);
 		
 		$url = $item->selection? get_category_link ($item->selection): $nourl;
+		if ($name == '')  $name = wpm_default_name ($item);
 		$item->type = $item->selection? 'Category': 'Heading';
-		if ($name == '')  $name = $selection? get_cat_name ($selection): __('Categories');
 		break;
 
 	case 'Page':
 		if (is_page($item->selection))  $class = $selected;
 		$url = get_page_link ($item->selection);
-		if ($name == '')  $name = get_the_title ($selection);
 		break;
 
 	case 'PageTree':
 		if (wpm_is_descendant($item->selection))  $class = $selected;
 		
-		$items = wp_list_pages ('echo=0&title_li=&child_of='.$item->selection);
+		$args = "echo=0&title_li=&child_of={$item->selection}&depth={$item->depth}";
+		$items = wp_list_pages ($args);
 		
 		$pattern = '@\<li([^>]*)>\<a([^>]*)>(.*?)\<\/a>@i';
 		$replacement = $html['items'][$item->type];
 		if ($replacement)  $items = preg_replace ($pattern, $replacement, $items);
 
 		$url = $item->selection? get_page_link ($item->selection): $nourl;
+		if ($name == '')  $name = wpm_default_name ($item);
 		$item->type = $item->selection? 'Page': 'Heading';
-		if ($name == '')  $name = $selection? get_the_title ($selection): __('Pages');
 		break;
 
 	case 'Post':
 		if (is_single($item->selection))  $class = $selected;
 		$url = get_permalink ($item->selection);
-		if ($name == '')  $name = get_the_title ($selection);
 		break;
 
 	case 'SearchBox':
@@ -132,6 +145,8 @@ function wpm_out41 ($node_id, $html, $css)
 
 	if ($process)
 	{
+		if ($name == '')  $name = wpm_default_name ($item);
+
 		$pattern = array ('/%attr/', '/%class/', '/%home/', '/%id/', '/%imageurl/', '/%items/', 
 			'/%menuclass/', '/%name/', '/%selection/', '/%url/',
 			'/%list/', '/%submit/', '/%image/');
@@ -154,6 +169,34 @@ function wpm_out41 ($node_id, $html, $css)
 	$hilite = ($class == $selected) || $itemside['hilite'];
 
 	return array ('output' => $output, 'hilite' => $hilite);
+}
+
+function wpm_append_nodes ($id)
+{
+	global $wpm_options;
+	
+	$wpm_options->update_option = false;
+
+	$item = wpm_readnode ($id);
+	switch ($item->type) 
+	{
+	case 'TagList':
+		$item->down = 0;
+		_wpm_update_links ($item);
+		
+		$tags = wpm_get_tags ();
+		foreach ($tags as $tag)
+		{
+			if (in_array ($tag->term_id, (array)$item->exclude)) continue;
+			$node->type = 'Tag';
+			$node->name = $tag->name;
+			$node->selection = $tag->term_id;
+			wpm_create_child ($item->id, $node);
+		}
+		break;
+	}
+
+	$wpm_options->update_option = true;
 }
 
 function wpm_output ($node_id, $html, $css)
