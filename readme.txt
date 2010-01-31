@@ -2,7 +2,7 @@
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
 Tested up to: 2.9.1
-Stable tag: 4.5
+Stable tag: 4.6
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -32,6 +32,9 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
+= 4.6 =
+* Added the Tag and TagList types (only with new template versions)
+* Added the Depth field for the PageTree and CategoryTree types 
 = 4.5 =
 * Added support for icons in menu items (only with new templates)
 * Fixed a bug affecting single and double quote characters that were incorrectly escaped 

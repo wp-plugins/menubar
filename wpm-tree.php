@@ -109,19 +109,19 @@ function wpm_read_node ($node_id)
 	return $node;
 }
 
-function wpm_update_node ($node)
+function wpm_update_node ($node_id, $node_values)
 {
 	global $wpm_tree, $wpm_options;
+	
+	foreach (get_object_vars ($node_values) as $key => $value)
+	{
+		if (in_array ($key, array ('id', 'side', 'down')))  continue; 
+		$wpm_tree->nodes[$node_id]->$key = $value;
+	}
 
-	$side = $wpm_tree->nodes[$node->id]->side;
-	$down = $wpm_tree->nodes[$node->id]->down;
+	if ($wpm_options->update_option)
+		update_option ($wpm_options->option_name, $wpm_tree);
 
-	$wpm_tree->nodes[$node->id] = $node;
-
-	$wpm_tree->nodes[$node->id]->side = $side;
-	$wpm_tree->nodes[$node->id]->down = $down;
-
-	update_option ($wpm_options->option_name, $wpm_tree);
 	return true;
 }
 
@@ -135,7 +135,9 @@ function wpm_delete_node ($node_id, $safe=true)
 	_wpm_unlink_node ($node_id);
 	
 	$wpm_tree->nodes[$node_id] = null;
-	update_option ($wpm_options->option_name, $wpm_tree);
+	
+	if ($wpm_options->update_option)
+		update_option ($wpm_options->option_name, $wpm_tree);
 	
 	return true;
 }
@@ -157,13 +159,15 @@ function _wpm_create_node ($node_values)
 
 	$id = $wpm_tree->ffree++;
 	
-	$wpm_tree->nodes[$id] = $node_values;
+	foreach (get_object_vars ($node_values) as $key => $value)
+		$wpm_tree->nodes[$id]->$key = $value;
 
 	$wpm_tree->nodes[$id]->id = $id;
 	$wpm_tree->nodes[$id]->side = 0;
 	$wpm_tree->nodes[$id]->down = 0;
 	
-	update_option ($wpm_options->option_name, $wpm_tree);
+	if ($wpm_options->update_option)
+		update_option ($wpm_options->option_name, $wpm_tree);
 
 	$node = wpm_read_node ($id);
 	return $node;
@@ -175,7 +179,9 @@ function _wpm_update_links ($node)
 
 	$wpm_tree->nodes[$node->id]->side = $node->side;
 	$wpm_tree->nodes[$node->id]->down = $node->down;
-	update_option ($wpm_options->option_name, $wpm_tree);
+	
+	if ($wpm_options->update_option)
+		update_option ($wpm_options->option_name, $wpm_tree);
 
 	return $node;
 }
@@ -268,6 +274,15 @@ function _wpm_is_descendant ($node_id, $parent_id, $level=0)
 		if (_wpm_is_descendant ($node_id, $item->side, $level))  return true;
 
 	return false;
+}
+
+function wpm_dump_tree ()
+{
+	global $wpm_tree;
+
+	printf ("<br>\n"); 
+	foreach ((array)$wpm_tree->nodes as $n)
+		if ($n->id)  printf ("%d %s %d %d<br>\n", $n->id, $n->name, $n->side, $n->down); 
 }
 
 function _wpm_cmpid ($a, $b)

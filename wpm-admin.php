@@ -17,6 +17,42 @@ function wpm_get_default_menu ()
 	return $menus[0]->id;
 }
 
+$wpm_field_name = array (
+'name' 			=> __('Name', 'wpm'), 
+'imageurl' 		=> __('Image', 'wpm'), 
+'type' 			=> __('Type', 'wpm'), 
+'selection' 	=> __('Selection', 'wpm'), 
+'exclude' 		=> __('Exclude', 'wpm'), 
+'sortby' 		=> __('Sort by', 'wpm'), 
+'depth' 		=> __('Depth', 'wpm'), 
+'cssclass' 		=> __('CSS class', 'wpm'), 
+'attributes'	=> __('Attributes', 'wpm'), 
+);
+
+$wpm_field_type = array (
+'name' 			=> 'string',
+'imageurl' 		=> 'string',
+'type' 			=> 'string',
+'selection' 	=> 'string',
+'exclude' 		=> 'array',
+'sortby' 		=> 'string',
+'depth' 		=> 'string',
+'cssclass' 		=> 'string', 
+'attributes'	=> 'string',
+);
+
+$wpm_field_usage = array (
+'name' 			=> 'All', 
+'imageurl' 		=> 'All', 
+'type' 			=> 'All', 
+'selection' 	=> 'All', 
+'exclude' 		=> array ('TagList'),
+'sortby' 		=> array ('TagList'),
+'depth' 		=> array ('CategoryTree', 'PageTree'),
+'cssclass' 		=> 'All', 
+'attributes'	=> 'All', 
+);
+
 function wpm_list_menu_items ($menuid)
 {
 	global $wpdb, $wpm_options;
@@ -44,8 +80,7 @@ function wpm_list_menu_items ($menuid)
 	  <th scope="col"><?php _e('Name', 'wpm') ?></th>
 	  <th scope="col"><?php _e('Type', 'wpm') ?></th>
       <th scope="col"><?php _e('Selection', 'wpm') ?></th>
-      <th scope="col"><?php _e('CSS class', 'wpm') ?></th>
-	  <th scope="col"><?php _e('Attributes', 'wpm') ?></th>
+      <th scope="col"></th>
       <th colspan="2" style="text-align: center;"><?php _e('Action', 'wpm') ?></th>
 	</tr>
 	</thead>
@@ -64,6 +99,7 @@ function wpm_list_menu_items ($menuid)
 function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 {
 	global $wpm_options;
+	global $wpm_field_name, $wpm_field_type, $wpm_field_usage;
 
 	$item = wpm_read_node ($item_id);
 	$next_id = $item->side;
@@ -101,7 +137,7 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 		"' class='delete'>" . __('Delete', 'wpm') . "</a>";
 
 	$selection = htmlspecialchars ($item->selection);
-	$name = $item->name? $item->name: wpm_default_name ($item->type, $item->selection);
+	$name = $item->name? $item->name: wpm_default_name ($item);
 	
 	echo "<tr class=\"$class\">
 		<td align='center'>$up</td>
@@ -109,8 +145,21 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 		<td>" . str_repeat("&#8212; ", $level) . "$image $name</td>
 		<td>$item->type</td>
 		<td>$selection</td>
-		<td>$item->cssclass</td>
-		<td>$item->attributes</td>
+		<td>";
+	foreach (get_object_vars ($item) as $key => $value)
+	{
+		if (in_array ($key, array ('id', 'side', 'down', 'name', 'imageurl', 'type', 'selection')))  continue; 
+		if ($value && ($wpm_field_usage[$key] == 'All' || in_array ($item->type, $wpm_field_usage[$key]))) 
+		{
+			switch ($wpm_field_type[$key])
+			{
+			case 'array':
+				$value = implode (',', $value); break;		
+			}
+			echo "<strong>$wpm_field_name[$key]</strong> $value ";
+		}
+	}
+	echo "</td>
 		<td align='center'>$edit</td>
 		<td align='center'>$delete</td>
 		</tr>\n";
@@ -226,36 +275,6 @@ function wpm_check_templates ()
 	return 0;
 }
 
-function wpm_default_name ($type, $selection)
-{
-	switch ($type)
-	{
-	case 'Home':
-		return __('Blog');
-
-	case 'FrontPage':
-		return __('Start');
-
-	case 'Category':	
-		return get_cat_name ($selection);
-
-	case 'CategoryTree':
-		return ($name = $selection)? get_cat_name ($selection): __('Categories');
-
-	case 'Page':
-		return get_the_title ($selection);
-
-	case 'PageTree':
-		return ($name = $selection)? get_the_title ($selection): __('Pages');
-
-	case 'Post':
-		return get_the_title ($selection);
-
-	default:
-		return '';
-	}
-}
-
 function wpm_get_vars ($vars)
 {
 	foreach ($vars as $var)
@@ -267,39 +286,45 @@ function wpm_get_vars ($vars)
 		else
 			$$var = $_POST["$var"];
 		
-		$$var = stripslashes ($$var);
+		$$var = stripslashes_deep ($$var);
+		unset ($_POST["$var"]);
 	}
 }
 
-wpm_get_vars (array ('submit', 'action', 'itemid', 'order', 'orderid', 'name', 'imageurl', 
-			'type', 'Category', 'CategoryTree', 'Page', 'PageTree', 'Post', 'External',
-			'SearchBox', 'Custom',
-			'cssclass', 'attributes', 'menuid', 'menuname', 'template'));
-
-switch ($type)
+function wpm_get_fields ()
 {
-case 'Home':
-case 'FrontPage':
-case 'Heading':
-	$selection = '';  break;
-case 'Category': 
-	$selection = $Category;  break;
-case 'CategoryTree': 
-	$selection = $CategoryTree;  break;
-case 'Page': 
-	$selection = $Page;  break;
-case 'PageTree': 
-	$selection = $PageTree;  break;
-case 'Post': 
-	$selection = $Post;  break;
-case 'SearchBox': 
-	$selection = $SearchBox;  break;
-case 'External': 
-	$selection = $External;  break;
-case 'Custom': 
-	$selection = $Custom;  break;
+	$exclude = array ('_wp_http_referer', '_wpnonce'); 
+	
+	foreach ($_POST as $key => $value)
+	{
+		if (in_array ($key, $exclude))  continue;
+		$fields->$key = stripslashes_deep ($value);
+	}
+
+	switch ($fields->type)
+	{
+	case 'Home':
+	case 'FrontPage':
+	case 'Heading':
+		$fields->selection = '';
+		break;
+	case 'TagList':
+		$fields->selection = '';
+		if (empty ($fields->exclude))  $fields->exclude = array();
+		break;
+	}
+	if (empty ($fields->selection))  $fields->selection = '';
+	
+	return $fields;
 }
-			
+
+function wpm_check_item ($order, $orderid, $fields)
+{
+}
+
+wpm_get_vars (array ('submit', 'action', 'itemid', 'order', 'orderid', 
+					 'menuid', 'menuname', 'template'));
+
 $msg = 0;
 
 switch ($submit)
@@ -338,7 +363,7 @@ case __('Update Menu', 'wpm'):
 
 	check_admin_referer ('updatemenu_' . $menuid);
 
-	$wpm_menu = wpm_read_node ($menuid);	
+	$wpm_menu = new stdClass;
 	$wpm_menu->name = $menuname;
 	$list = wpm_1to2 ($template);
 	$wpm_menu->selection = $list[0];
@@ -350,7 +375,7 @@ case __('Update Menu', 'wpm'):
 	global $$features;
 	$wpm_menu->features = $$features;
 	
-	if (wpm_update_node ($wpm_menu))
+	if (wpm_update_node ($menuid, $wpm_menu))
 		$msg = 9; 
 	else
 		$msg = 10; 
@@ -367,14 +392,13 @@ break;
 case __('Add Menu', 'wpm'):  
 
 	check_admin_referer ('addmenu');
-	
+
 	$wpm_menu = new stdClass;
 	$wpm_menu->name = $menuname;
+	$wpm_menu->type = $wpm_options->menu_type;
 	$list = wpm_1to2 ($template);
 	$wpm_menu->selection = $list[0];
 	$wpm_menu->cssclass = $list[1];
-	$wpm_menu->attributes = '';
-	$wpm_menu->type = $wpm_options->menu_type;
 
 	wpm_include ($wpm_menu->selection, '');
 	$features = 'wpm_features_' . $wpm_menu->selection;
@@ -403,21 +427,12 @@ case 'add':
 
 	check_admin_referer ('add');
 
-	$wpm_item = new stdClass;
-	$wpm_menu = wpm_read_node ($menuid);
-	
-	$wpm_item->name = $name;
-	if ($wpm_menu->features['images'] == true)
-		$wpm_item->imageurl = $imageurl;
-	$wpm_item->type = $type;
-	$wpm_item->selection = $selection;
-	$wpm_item->cssclass = $cssclass;
-	$wpm_item->attributes = $attributes;
-	
-	if (!$wpm_item->selection)
+	$wpm_item = wpm_get_fields ();	
+	if ($wpm_item->selection == null)
 	{
-		if ($wpm_item->type == 'Page')  $wpm_item->type = 'PageTree';
-		if ($wpm_item->type == 'Category')  $wpm_item->type = 'CategoryTree';
+		if ($wpm_item->type == 'Page')		$wpm_item->type = 'PageTree';
+		if ($wpm_item->type == 'Category')	$wpm_item->type = 'CategoryTree';
+		if ($wpm_item->type == 'Tag')		break;
 	}
 
 	if ($order == 0)
@@ -459,21 +474,12 @@ case 'update':
 
 	check_admin_referer ('update_' . $itemid);
 
-	$wpm_item = wpm_read_node ($itemid);
-	$wpm_menu = wpm_read_node ($menuid);
-	
-	$wpm_item->name = $name;
-	if ($wpm_menu->features['images'] == true)
-		$wpm_item->imageurl = $imageurl;
-	$wpm_item->type = $type;
-	$wpm_item->selection = $selection;
-	$wpm_item->cssclass = $cssclass;
-	$wpm_item->attributes = $attributes;
-
-	if (!$wpm_item->selection)
+	$wpm_item = wpm_get_fields ();
+	if ($wpm_item->selection == null)
 	{
-		if ($wpm_item->type == 'Page')  $wpm_item->type = 'PageTree';
-		if ($wpm_item->type == 'Category')  $wpm_item->type = 'CategoryTree';
+		if ($wpm_item->type == 'Page')		$wpm_item->type = 'PageTree';
+		if ($wpm_item->type == 'Category')	$wpm_item->type = 'CategoryTree';
+		if ($wpm_item->type == 'Tag')		break;
 	}
 
 	switch ($order)
@@ -483,8 +489,8 @@ case 'update':
 	case '3':  wpm_move_after ($orderid, $itemid); break;
 	}
 
-	$updated = wpm_update_node ($wpm_item);
-
+	$updated = wpm_update_node ($itemid, $wpm_item);
+	
 	if ($updated)
 		$msg = 3; 
 	else
@@ -522,7 +528,7 @@ if ($missingtp)  $msg = $missingtp + 14;
 <div id="icon-plugins" class="icon32">
 <br/>
 </div>
-<h2><?php _e('Menubar', 'wpm'); ?> </h2>
+<h2><?php echo "Menubar $wpm_options->wpm_version"; ?></h2>
 <br/>
 
 <?php if ($msg) : ?>
