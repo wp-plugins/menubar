@@ -1,7 +1,7 @@
 === Menubar ===
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
-Tested up to: 2.9.1
+Tested up to: 2.9.2
 Stable tag: 4.6
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
@@ -20,15 +20,15 @@ A Menubar live demo is available on the [WP Menubar demo site](http://www.dontdr
 
 == Installation ==
 
-See the [First installation procedure](http://www.dontdream.it/wp-menubar-3-documentation#First%20installation%20procedure) or the [Upgrading procedure](http://www.dontdream.it/wp-menubar-3-documentation#Upgrading%20procedure).
+See the [First installation procedure](http://www.blogsweek.com/wp-menubar-3-documentation#First%20installation%20procedure) or the [Upgrading procedure](http://www.blogsweek.com/wp-menubar-3-documentation#Upgrading%20procedure).
 
 == Frequently Asked Questions ==
 
-See the [WP Menubar documentation](http://www.dontdream.it/wp-menubar-3-documentation).
+See the [WP Menubar documentation](http://www.blogsweek.com/wp-menubar-3-documentation).
 
 == Screenshots ==
 
-Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPress Menubar](http://www.dontdream.it/category/wordpress-menubar) category archive. 
+Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPress Menubar](http://www.blogsweek.com/category/wordpress-menubar) category archive. 
 
 == Changelog ==
 
