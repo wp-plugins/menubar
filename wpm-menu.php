@@ -2,158 +2,162 @@
 
 function wpm_out41 ($node_id, $html, $css)
 {
-	if ($node_id == 0)  return array ('output' => '', 'hilite' => false);
+	if ($node_id == 0)  return array ('output' => '', 'hilight' => false);
+
+	wpm_append_nodes ($node_id);
 	$item = wpm_readnode ($node_id);
 
 	$itemdown = wpm_out41 ($item->down, $html, $css);
 
 	$process = true;
 	$active = $html['active'];
-	$nourl = $html['nourl'];
 	$home = get_bloginfo ('url', 'display');
-	$name = $item->name? __($item->name): "";
+	$name = $item->name? __($item->name): wpm_display_name ($item);
+	$url = wpm_url ($item, $html['nourl']);
+	$template = wpm_template ($item, $html, $url);
 	$attributes = $item->attributes? __($item->attributes): "";
 	$selection = $item->selection? __($item->selection): "";
 	$menuclass = $css? substr($css, 0, -4): $item->selection;
 	$class = $item->cssclass? " class=\"$item->cssclass\"": "";
 	$selected = $item->cssclass? " class=\"$item->cssclass $active\"": " class=\"$active\"";
+	
+	if ($itemdown['hilight'])  $class = $selected;
+	else if (wpm_hilight ($item))  $class = $selected;
 
-	if ($itemdown['hilite'])  $class = $selected;
 	$items = $itemdown['output'];
-
-	if (isset ($html['items'][$item->type]))
-	switch ($item->type) 
-	{
-	case 'Menu':
-		break;
-
-	case 'Home':
-		$sof = get_option ('show_on_front');
-		$pfp = get_option ('page_for_posts');
-
-		if (is_home())  $class = $selected;
-		if ($sof == 'page') 
-			$url = $pfp? get_page_link ($pfp): $nourl;
-		else
-			$url = $home;
-		if ($name == '')  $name = __('Blog');
-		break;
-
-	case 'FrontPage':
-		$sof = get_option ('show_on_front');
-		$pof = get_option ('page_on_front');
-
-		if ($sof == 'page' and $pof)
-		{
-			if (is_page($pof))  $class = $selected;
-		}
-		else
-		{
-			if (is_home())  $class = $selected;
-		}
-		$url = $home;
-		if ($name == '')  $name = __('Start');
-		break;
-
-	case 'Heading':
-		$url = $nourl;
-		break;
-
-	case 'Category':	
-		if (is_category($item->selection) or (is_single() and in_category($item->selection))) 
-			$class = $selected; 
-		else foreach ((array) get_term_children ($item->selection, 'category') as $child)
-			if (is_category($child) or (is_single() and in_category($child))) 
-				$class = $selected;
-
-		$url = get_category_link ($item->selection);
-		if ($name == '')  $name = get_cat_name ($selection);
-		break;
-
-	case 'CategoryTree':
-		if (is_category($item->selection) or (is_single() and in_category($item->selection))) 
-			$class = $selected; 
-		else foreach ((array) get_term_children ($item->selection, 'category') as $child)
-			if (is_category($child) or (is_single() and in_category($child))) 
-				$class = $selected;
-
-		$items = wp_list_categories ('echo=0&title_li=&child_of='.$item->selection); 
-		if ($items == '<li>'. __('No categories'). '</li>')  $items = '';
-
-		$pattern = '@\<li([^>]*)>\<a([^>]*)>(.*?)\<\/a>@i';
-		$replacement = $html['items'][$item->type];
-		if ($replacement)  $items = preg_replace ($pattern, $replacement, $items);
-		
-		$url = $item->selection? get_category_link ($item->selection): $nourl;
-		$item->type = $item->selection? 'Category': 'Heading';
-		if ($name == '')  $name = $selection? get_cat_name ($selection): __('Categories');
-		break;
-
-	case 'Page':
-		if (is_page($item->selection))  $class = $selected;
-		$url = get_page_link ($item->selection);
-		if ($name == '')  $name = get_the_title ($selection);
-		break;
-
-	case 'PageTree':
-		if (wpm_is_descendant($item->selection))  $class = $selected;
-		
-		$items = wp_list_pages ('echo=0&title_li=&child_of='.$item->selection);
-		
-		$pattern = '@\<li([^>]*)>\<a([^>]*)>(.*?)\<\/a>@i';
-		$replacement = $html['items'][$item->type];
-		if ($replacement)  $items = preg_replace ($pattern, $replacement, $items);
-
-		$url = $item->selection? get_page_link ($item->selection): $nourl;
-		$item->type = $item->selection? 'Page': 'Heading';
-		if ($name == '')  $name = $selection? get_the_title ($selection): __('Pages');
-		break;
-
-	case 'Post':
-		if (is_single($item->selection))  $class = $selected;
-		$url = get_permalink ($item->selection);
-		if ($name == '')  $name = get_the_title ($selection);
-		break;
-
-	case 'SearchBox':
-		break;
-
-	case 'External':
-		$url = $item->selection;
-		break;
-
-	case 'Custom':
-		$html['items'][$item->type] = $selection;
-		break;
-
-	default:
-		break;
-	}
 
 	if ($process)
 	{
-		$pattern = array ('/%attr/', '/%class/', '/%home/', '/%id/', '/%imageurl/', '/%items/', 
-			'/%menuclass/', '/%name/', '/%selection/', '/%url/',
-			'/%list/', '/%submit/', '/%image/');
+		$pattern = array ('%attr', '%class', '%home', '%id', '%imageurl', '%items', 
+			'%menuclass', '%name', '%selection', '%url',
+			'%list', '%submit', '%image');
 		$replacement = array ($attributes, $class, $home, $item->id, $item->imageurl, $items, 
 			$menuclass, $name, $selection, $url);
 
-		$list = $items? preg_replace ($pattern, $replacement, $html['list']): '';
-		$submit = $selection? preg_replace ($pattern, $replacement, $html['submit']): '';
-		$image = $item->imageurl? preg_replace ($pattern, $replacement, $html['image']): '';
+		$list = $items? str_replace ($pattern, $replacement, $html['list']): '';
+		$submit = $selection? str_replace ($pattern, $replacement, $html['submit']): '';
+		$image = $item->imageurl? str_replace ($pattern, $replacement, $html['image']): '';
 		
 		$replacement[] = $list;
 		$replacement[] = $submit;
 		$replacement[] = $image;
 		
-		$output = preg_replace ($pattern, $replacement, $html['items'][$item->type]);
+		$output = str_replace ($pattern, $replacement, $template);
 	}
 
 	$itemside = wpm_out41 ($item->side, $html, $css);
 	$output .= $itemside['output'];
-	$hilite = ($class == $selected) || $itemside['hilite'];
+	$hilight = ($class == $selected) || $itemside['hilight'];
 
-	return array ('output' => $output, 'hilite' => $hilite);
+	return array ('output' => $output, 'hilight' => $hilight);
+}
+
+function wpm_append_nodes ($id)
+{
+	global $wpm_options;
+	
+	$wpm_options->update_option = false;
+
+	$item = wpm_readnode ($id);
+	switch ($item->type) 
+	{
+	case 'TagList':
+		$item->down = 0;
+		_wpm_update_links ($item);
+		
+		$node->type = 'Heading';
+		$node->name = wpm_display_name ($item);
+		wpm_update_node ($item->id, $node);
+
+		$tags = wpm_get_tags ();
+		foreach ($tags as $tag)
+		{
+			if (in_array ($tag->term_id, (array)$item->exclude)) continue;
+			$node->type = 'Tag';
+			$node->name = $tag->name;
+			$node->selection = $tag->term_id;
+			wpm_create_child ($item->id, $node);
+		}
+		break;
+	
+	case 'CategoryTree':
+		$item->down = 0;
+		_wpm_update_links ($item);
+
+		$node->type = (!$item->selection || 
+			in_array ($item->selection, (array)$item->headings))? 'Heading': 'Category';
+		$node->name = wpm_display_name ($item);
+		wpm_update_node ($item->id, $node);
+
+		$cats = wpm_get_cats ();
+		$newparents = array ($item->selection);
+		
+		while (++$level)
+		{
+			if ($item->depth > 0 && $level > $item->depth)  break;
+			if (count ($newparents) == 0)  break;
+			
+			$parents = $newparents;
+			$newparents = array ();
+
+			foreach ($cats as $cat)
+			{
+				if (in_array ($cat->term_id, (array)$item->exclude))  continue;
+				if (in_array ($cat->parent, $parents))
+				{
+					$newparents[] = $cat->term_id;
+					
+					$node->type = in_array ($cat->term_id, (array)$item->headings)? 'Heading': 'Category';
+					$node->name = $cat->name;
+					$node->selection = $cat->term_id;
+					
+					$parent = wpm_find_node ($item->id, 'selection', $cat->parent);
+					wpm_create_child ($parent->id, $node);
+				}
+			}
+		}
+		break;
+		
+	case 'PageTree':
+		$item->down = 0;
+		_wpm_update_links ($item);
+
+		$node->type = (!$item->selection || 
+			in_array ($item->selection, (array)$item->headings))? 'Heading': 'Page';
+		$node->name = wpm_display_name ($item);
+		wpm_update_node ($item->id, $node);
+
+		$pages = wpm_get_pages ();
+		$newparents = array ($item->selection);
+
+		while (++$level)
+		{
+			if ($item->depth > 0 && $level > $item->depth)  break;
+			if (count ($newparents) == 0)  break;
+			
+			$parents = $newparents;
+			$newparents = array ();
+
+			foreach ($pages as $page)
+			{
+				if (in_array ($page->ID, (array)$item->exclude))  continue;
+				if (in_array ($page->post_parent, $parents))
+				{
+					$newparents[] = $page->ID;
+					
+					$node->type = in_array ($page->ID, (array)$item->headings)? 'Heading': 'Page';
+					$node->name = $page->post_title;
+					$node->selection = $page->ID;
+					
+					$parent = wpm_find_node ($item->id, 'selection', $page->post_parent);
+					wpm_create_child ($parent->id, $node);
+				}
+			}
+		}
+		break;
+	}
+
+	$wpm_options->update_option = true;
 }
 
 function wpm_output ($node_id, $html, $css)

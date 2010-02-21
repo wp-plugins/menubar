@@ -2,14 +2,14 @@
 
 /*
 Plugin Name: Menubar
-Plugin URI: http://www.dontdream.it/wp-menubar-3-documentation
+Plugin URI: http://www.blogsweek.com/wp-menubar-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 4.5
-Author: andrea@dontdream.it
-Author URI: http://www.dontdream.it/
+Version: 4.7
+Author: Andrea Tarantini
+Author URI: http://www.blogsweek.com/
 */
 
-/*  Copyright 2007-2010  www.dontdream.it  (email : andrea@dontdream.it)
+/*  Copyright 2007-2010 Andrea Tarantini (andrea@blogsweek.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@ Author URI: http://www.dontdream.it/
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 global $wpm_options;
@@ -39,10 +39,13 @@ $wpm_options->form_action	= admin_url ('themes.php?page='. $wpm_options->admin_f
 $wpm_options->php_file    	= 'wpm3.php';
 $wpm_options->table_name  	= 'menubar3';
 $wpm_options->option_name  	= 'menubar';
+$wpm_options->update_option	= true;
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '4.5';
+$wpm_options->wpm_version 	= '4.7';
 
+include_once ('wpm-db.php');
+include_once ('wpm-menu.php');
 include_once ('wpm-tree.php');
 
 function wpm_add_pages ()
@@ -131,8 +134,6 @@ function wpm_display ($menuname, $template='', $css='')
 
 	return false;
 }
-
-include ('wpm-menu.php');
 
 function wpm_is_descendant ($ancestor)
 {
