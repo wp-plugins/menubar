@@ -17,46 +17,10 @@ function wpm_get_default_menu ()
 	return $menus[0]->id;
 }
 
-$wpm_field_name = array (
-'name' 			=> __('Name', 'wpm'), 
-'imageurl' 		=> __('Image', 'wpm'), 
-'type' 			=> __('Type', 'wpm'), 
-'selection' 	=> __('Selection', 'wpm'), 
-'exclude' 		=> __('Exclude', 'wpm'), 
-'sortby' 		=> __('Sort by', 'wpm'), 
-'depth' 		=> __('Depth', 'wpm'), 
-'cssclass' 		=> __('CSS class', 'wpm'), 
-'attributes'	=> __('Attributes', 'wpm'), 
-);
-
-$wpm_field_type = array (
-'name' 			=> 'string',
-'imageurl' 		=> 'string',
-'type' 			=> 'string',
-'selection' 	=> 'string',
-'exclude' 		=> 'array',
-'sortby' 		=> 'string',
-'depth' 		=> 'string',
-'cssclass' 		=> 'string', 
-'attributes'	=> 'string',
-);
-
-$wpm_field_usage = array (
-'name' 			=> 'All', 
-'imageurl' 		=> 'All', 
-'type' 			=> 'All', 
-'selection' 	=> 'All', 
-'exclude' 		=> array ('TagList'),
-'sortby' 		=> array ('TagList'),
-'depth' 		=> array ('CategoryTree', 'PageTree'),
-'cssclass' 		=> 'All', 
-'attributes'	=> 'All', 
-);
-
 function wpm_list_menu_items ($menuid)
 {
-	global $wpdb, $wpm_options;
-	
+	global $wpdb, $wpm_options, $wpm_error;
+
 	$menu = wpm_read_node ($menuid);
 ?>
 
@@ -79,8 +43,7 @@ function wpm_list_menu_items ($menuid)
       <th colspan="2" style="text-align: center;"><?php _e('Order', 'wpm') ?></th>
 	  <th scope="col"><?php _e('Name', 'wpm') ?></th>
 	  <th scope="col"><?php _e('Type', 'wpm') ?></th>
-      <th scope="col"><?php _e('Selection', 'wpm') ?></th>
-      <th scope="col"></th>
+      <th scope="col"><?php _e('Fields', 'wpm') ?></th>
       <th colspan="2" style="text-align: center;"><?php _e('Action', 'wpm') ?></th>
 	</tr>
 	</thead>
@@ -91,6 +54,11 @@ function wpm_list_menu_items ($menuid)
 	
 	</tbody>
 </table>
+
+<?php if ($wpm_error == 'ghostchildren')
+	_e('<strong style="color:red;">* Children items of CategoryTree, PageTree and TagList types are ignored</strong>', 'wpm');
+?>
+
 </div>
 
 <?php		
@@ -98,8 +66,7 @@ function wpm_list_menu_items ($menuid)
 
 function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 {
-	global $wpm_options;
-	global $wpm_field_name, $wpm_field_type, $wpm_field_usage;
+	global $wpm_options, $wpm_error;
 
 	$item = wpm_read_node ($item_id);
 	$next_id = $item->side;
@@ -136,29 +103,25 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 	$delete = "<a href='" . wp_nonce_url ($url_delete, 'delete_' . $item->id) . 
 		"' class='delete'>" . __('Delete', 'wpm') . "</a>";
 
-	$selection = htmlspecialchars ($item->selection);
-	$name = $item->name? $item->name: wpm_default_name ($item);
-	
+	$name = wpm_display_name ($item);
+	if ($item->down && in_array ($item->type, array ('CategoryTree', 'PageTree', 'TagList')))
+	{
+		$name = "<strong style=\"color:red;\">$name *</strong>";
+		$wpm_error = 'ghostchildren';
+	}
+
 	echo "<tr class=\"$class\">
 		<td align='center'>$up</td>
 		<td align='center'>$down</td>
 		<td>" . str_repeat("&#8212; ", $level) . "$image $name</td>
 		<td>$item->type</td>
-		<td>$selection</td>
 		<td>";
-	foreach (get_object_vars ($item) as $key => $value)
-	{
-		if (in_array ($key, array ('id', 'side', 'down', 'name', 'imageurl', 'type', 'selection')))  continue; 
-		if ($value && ($wpm_field_usage[$key] == 'All' || in_array ($item->type, $wpm_field_usage[$key]))) 
-		{
-			switch ($wpm_field_type[$key])
-			{
-			case 'array':
-				$value = implode (',', $value); break;		
-			}
-			echo "<strong>$wpm_field_name[$key]</strong> $value ";
-		}
-	}
+
+	$sel = wpm_display_selection ($item);
+	if ($sel[1])  echo "<strong>{$sel[0]}</strong> {$sel[1]} ";
+
+	echo wpm_display_fields ($item);
+	
 	echo "</td>
 		<td align='center'>$edit</td>
 		<td align='center'>$delete</td>
@@ -312,8 +275,12 @@ function wpm_get_fields ()
 		$fields->selection = '';
 		if (empty ($fields->exclude))  $fields->exclude = array();
 		break;
+	case 'PageTree':
+	case 'CategoryTree':
+		if (empty ($fields->exclude))  $fields->exclude = array();
+		if (empty ($fields->headings))  $fields->headings = array();
+		break;
 	}
-	if (empty ($fields->selection))  $fields->selection = '';
 	
 	return $fields;
 }

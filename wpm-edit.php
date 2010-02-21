@@ -3,6 +3,7 @@
 function wpm_item_form ($action, $menuid, $item=null)
 {
 	global $wpm_options;
+	global $wpm_type_list;
 
 	$menu = wpm_read_node ($menuid);
 ?>
@@ -81,23 +82,6 @@ if ($action == 'edit') {
 	$selected = key ($item_list); 
 	$mincount = 0;
 }
-
-$typelist = array (
-"Home" =>			'Home'			. __(': the main page of your blog', 'wpm'),
-"FrontPage" =>		'FrontPage'		. __(': the front page of your site', 'wpm'),
-"Heading" =>		'Heading'		. __(': a non clickable item', 'wpm'), 
-"Tag" =>			'Tag'			. __(': a tag page', 'wpm'), 
-"TagList" =>		'TagList'		. __(': the tag page list', 'wpm'), 
-"Category" =>		'Category'		. __(': a category page', 'wpm'), 
-"CategoryTree" =>	'CategoryTree'	. __(': a category page, with subcategories', 'wpm'), 
-"Page" =>			'Page'			. __(': a static page', 'wpm'),
-"PageTree" =>		'PageTree'		. __(': a static page, with subpages', 'wpm'),
-"Post" =>			'Post'			. __(': a single post', 'wpm'),
-"SearchBox" =>		'SearchBox'		. __(': a search box', 'wpm'),
-"External" =>		'External'		. __(': any URL', 'wpm'),
-"Custom" =>			'Custom'		. __(': your custom HTML', 'wpm'),
-);		
-
 ?>
 
 <div class="wrap">
@@ -117,7 +101,7 @@ $typelist = array (
 <?php if ($menu->features['images'] == true)
 		wpm_input (__('Image:', 'wpm'), 'imageurl', $item->imageurl, 50, __('(optional image URL)', 'wpm')); ?>
 
-<?php wpm_select (__('Type:', 'wpm'), 'type', $typelist, $item->type); ?>
+<?php wpm_select (__('Type:', 'wpm'), 'type', $wpm_type_list, $item->type); ?>
 
 </table>
 
@@ -270,6 +254,11 @@ function wpm_typeargs ($type, $item=null)
 		$cat_list  = wpm_cat_list (0, $cat_list, 0);
 		wpm_select (__('Category:', 'wpm'), 'selection', $cat_list, $item->selection);
 		wpm_input  (__('Depth:', 'wpm'), 'depth', $item->depth, 10, __('(max number of category levels to display)', 'wpm'));
+		unset ($cat_list[0]);
+		wpm_multiselect (__('Exclude:', 'wpm'), 'exclude', $cat_list, $item->exclude, 
+			'size="4" style="height: auto;"', __('(use Ctrl+click to select/deselect multiple categories)', 'wpm')); 
+		wpm_multiselect (__('Headings:', 'wpm'), 'headings', $cat_list, $item->headings, 
+			'size="4" style="height: auto;"', __('(selected category names will be made unclickable)', 'wpm')); 
 		break;
 
 	case 'Page':
@@ -282,6 +271,11 @@ function wpm_typeargs ($type, $item=null)
 		$page_list = wpm_page_list (0, $page_list, 0); 
 		wpm_select (__('Page:', 'wpm'), 'selection', $page_list, $item->selection);
 		wpm_input  (__('Depth:', 'wpm'), 'depth', $item->depth, 10, __('(max number of page levels to display)', 'wpm'));
+		unset ($page_list[0]);
+		wpm_multiselect (__('Exclude:', 'wpm'), 'exclude', $page_list, $item->exclude, 
+			'size="4" style="height: auto;"', __('(use Ctrl+click to select/deselect multiple pages)', 'wpm')); 
+		wpm_multiselect (__('Headings:', 'wpm'), 'headings', $page_list, $item->headings, 
+			'size="4" style="height: auto;"', __('(selected page names will be made unclickable)', 'wpm')); 
 		break;
 
 	case 'Post':
@@ -308,7 +302,7 @@ function wpm_item_list ($item_id, $list, $level)
 	
 	if ($level > 0)
 	{
-		$name = $item->name? $item->name: wpm_default_name ($item);
+		$name = wpm_display_name ($item);
 		$list[$item->id] = str_repeat("&#8212; ", $level-1) . $name;
 	}
 		

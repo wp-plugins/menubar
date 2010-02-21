@@ -10,6 +10,12 @@ function wpm_init_tree ()
 		wpm_create_tree ();
 		if (wpm_table_exists())  wpm_move_tree ();
 	}
+	if ($wpm_tree->version == '1.0')
+	{
+		wpm_update_1to2 ();
+		$wpm_tree->version = '2.0';
+		update_option ($wpm_options->option_name, $wpm_tree);
+	}
 
 	return true;
 }
@@ -140,6 +146,19 @@ function wpm_delete_node ($node_id, $safe=true)
 		update_option ($wpm_options->option_name, $wpm_tree);
 	
 	return true;
+}
+
+function wpm_find_node ($node_id, $field, $value)
+{
+	if ($node_id == 0)  return null;
+
+	$node = wpm_read_node ($node_id);	
+	if ($node->$field == $value)  return $node;
+	
+	if ($down = wpm_find_node ($node->down, $field, $value))  return $down;
+	if ($side = wpm_find_node ($node->side, $field, $value))  return $side;
+	
+	return null;		
 }
 
 function wpm_swap_node ($node_id)
@@ -388,4 +407,18 @@ function wpm_old_read_node ($node_id)
 
 	return $node;
 }
+
+function wpm_update_1to2 ()
+{
+	global $wpm_tree;
+
+	foreach ($wpm_tree->nodes as $item)
+	{
+		if ($item->type == 'CategoryTree' && empty ($item->selection))  $item->selection = 0;
+		elseif ($item->type == 'PageTree' && empty ($item->selection))  $item->selection = 0;
+	}
+	
+	return true;		
+}
+
 ?>
