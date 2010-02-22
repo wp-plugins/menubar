@@ -17,19 +17,19 @@ $wpm_type_list = array (
 );		
 
 $wpm_type_fields = array (
-'Home' 			=> array (),
-'FrontPage' 	=> array (),
-'Heading' 		=> array (),
-'Tag' 			=> array ('tag'),
-'TagList' 		=> array ('exclude'),
-'Category' 		=> array ('category'),
-'CategoryTree' 	=> array ('category', 'depth', 'exclude', 'headings'),
-'Page' 			=> array ('page'),
-'PageTree' 		=> array ('page', 'depth', 'exclude', 'headings'),
-'Post' 			=> array ('postid'),
-'SearchBox' 	=> array ('button'),
-'External' 		=> array ('url'),
-'Custom' 		=> array ('html'),
+'Home' 			=> array ('cssclass', 'attributes'),
+'FrontPage' 	=> array ('cssclass', 'attributes'),
+'Heading' 		=> array ('cssclass', 'attributes'),
+'Tag' 			=> array ('tag', 'cssclass', 'attributes'),
+'TagList' 		=> array ('exclude', 'cssclass', 'attributes'),
+'Category' 		=> array ('category', 'cssclass', 'attributes'),
+'CategoryTree' 	=> array ('category', 'depth', 'exclude', 'headings', 'cssclass', 'attributes'),
+'Page' 			=> array ('page', 'cssclass', 'attributes'),
+'PageTree' 		=> array ('page', 'depth', 'exclude', 'headings', 'cssclass', 'attributes'),
+'Post' 			=> array ('postid', 'cssclass', 'attributes'),
+'SearchBox' 	=> array ('button', 'cssclass', 'attributes'),
+'External' 		=> array ('url', 'cssclass', 'attributes'),
+'Custom' 		=> array ('html', 'cssclass', 'attributes'),
 );
 
 $wpm_field_name = array (
