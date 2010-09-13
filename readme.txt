@@ -1,8 +1,8 @@
 === Menubar ===
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
-Tested up to: 3.0
-Stable tag: 4.7
+Tested up to: 3.0.1
+Stable tag: 4.8
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -10,7 +10,7 @@ Single and multi-level menus for your WordPress site, styled with customizable m
 
 With Menubar you can easily build and manage single and multi-level menus for your WordPress site.
 
-* Build your menus selecting item types among Home, FrontPage, Heading, Tag, TagList, Category, CategoryTree, Page, PageTree, Post, SearchBox, External, Custom, in any combination
+* Build your menus selecting item types among Home, FrontPage, Heading, Tag, TagList, Category, CategoryTree, Page, PageTree, Post, SearchBox, External, PHP, Custom, in any combination
 * Display a menu inserting in your theme, e.g. at the end of *header.php*, the line `<?php do_action ('wp_menubar', 'your_menu_name'); ?>`
 * Use the *Menubar* widget to display your menus in a widget ready area or sidebar (only with WordPress 2.8 or higher)
 * To style your menus, select one of the available Menubar templates, customize your selected template, or use the CSS from your theme
@@ -32,6 +32,8 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
+= 4.8 =
+* Added the PHP item type
 = 4.7 =
 * Added the Exclude field to PageTree and CategoryTree types, so you can prevent one or more elements from being displayed 
 * Added the Headings field to PageTree and CategoryTree types, so you can make one or more elements non clickable 

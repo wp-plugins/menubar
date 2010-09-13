@@ -290,6 +290,10 @@ function wpm_typeargs ($type, $item=null)
 		wpm_input  (__('URL:', 'wpm'), 'selection', $item->selection, 60);
 		break;
 
+	case 'PHP':
+		wpm_input  (__('URL:', 'wpm'), 'selection', $item->selection, 60);
+		break;
+
 	case 'Custom':
 		wpm_input  (__('HTML:', 'wpm'), 'selection', $item->selection, 60);
 		break;
