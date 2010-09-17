@@ -33,7 +33,7 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 == Changelog ==
 
 = 4.8 =
-* Added the PHP item type
+* Added the PHP item type, so you can build your menu items dynamically with PHP code
 = 4.7 =
 * Added the Exclude field to PageTree and CategoryTree types, so you can prevent one or more elements from being displayed 
 * Added the Headings field to PageTree and CategoryTree types, so you can make one or more elements non clickable 
