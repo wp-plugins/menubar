@@ -13,9 +13,9 @@ $wpm_type_list = array (
 'Post' 			=> 'Post'			. __(': a single post', 'wpm'),
 'SearchBox' 	=> 'SearchBox'		. __(': a search box', 'wpm'),
 'External' 		=> 'External'		. __(': any static URL', 'wpm'),
-'PHP'	 		=> 'PHP'			. __(': any PHP generated URL', 'wpm'),
+'PHP'	 		=> 'PHP'			. __(': any PHP generated label and URL', 'wpm'),
 'Custom' 		=> 'Custom'			. __(': your custom HTML', 'wpm'),
-);		
+);
 
 $wpm_type_fields = array (
 'Home' 			=> array ('cssclass', 'attributes'),
@@ -30,7 +30,7 @@ $wpm_type_fields = array (
 'Post' 			=> array ('postid', 'cssclass', 'attributes'),
 'SearchBox' 	=> array ('button', 'cssclass', 'attributes'),
 'External' 		=> array ('url', 'cssclass', 'attributes'),
-'PHP'	 		=> array ('url', 'cssclass', 'attributes'),
+'PHP'	 		=> array ('phpcode', 'cssclass', 'attributes'),
 'Custom' 		=> array ('html', 'cssclass', 'attributes'),
 );
 
@@ -59,6 +59,19 @@ $wpm_field_type = array (
 'headings' 		=> 'array',
 'sortby' 		=> 'string',
 );
+
+function wpm_label ($item)
+{
+	switch ($item->type)
+	{
+	case 'PHP':
+		$out = eval ($item->selection);
+		$label = is_array($out)? $out[0]: $item->name;
+		if ($label)  return $label;
+	}
+
+	return wpm_display_name ($item);
+}
 
 function wpm_display_name ($item)
 {
@@ -110,7 +123,8 @@ function wpm_url ($item, $nourl)
 	
 	case 'Post':			return get_permalink ($item->selection);
 	case 'External':		return $item->selection;
-	case 'PHP':				return eval ($item->selection);
+	case 'PHP':				$out = eval ($item->selection);
+							return is_array($out)? $out[1]: $out;
 	}
 
 	return $nourl;
@@ -189,11 +203,13 @@ function wpm_hilight ($item)
 		return false;
 
 	case 'External':
-		if ($item->selection == wpm_this_url ())  return true;
+		if (wpm_this_url ($item->selection))  return true;
 		return false;
 
 	case 'PHP':
-		if (eval ($item->selection) == wpm_this_url ())  return true;
+		$out = eval ($item->selection);
+		$url = is_array($out)? $out[1]: $out;
+		if (wpm_this_url ($url))  return true;
 		return false;
 	}
 
@@ -220,7 +236,7 @@ function wpm_display_selection ($item)
 	case 'Post':			return array ('Post ID', $selection);
 	case 'SearchBox':		return array ('Button', $selection);
 	case 'External':		return array ('URL', $selection);
-	case 'PHP':				return array ('URL', $selection);
+	case 'PHP':				return array ('PHP code', $selection);
 	case 'Custom':			return array ('HTML', htmlspecialchars ($selection));
 	
 	default:				return array ();
@@ -302,11 +318,23 @@ function wpm_get_pages ()
 	return $wpm_pages;
 }
 
-function wpm_this_url ()
+function wpm_this_url ($url)
 {
-	$protocol = ($_SERVER["HTTPS"] == 'on')? 'https': 'http';
-	$req_uri = (isset ($_SERVER['REQUEST_URI']))? $_SERVER['REQUEST_URI']: $_SERVER['PHP_SELF'];
+	global $wp_rewrite;
 
-	return $protocol. '://'. $_SERVER['SERVER_NAME']. $req_uri;
+	$protocol = ($_SERVER["HTTPS"] == 'on')? 'https': 'http';
+
+	if ($wp_rewrite->using_permalinks ())
+	{
+		list ($url) = explode ('?', $url);
+		list ($path) = explode ('?', $_SERVER['REQUEST_URI']);
+	}
+	else
+	{
+		$path = $_SERVER['REQUEST_URI'];
+	}
+
+	if ($url == $protocol. '://'. $_SERVER['SERVER_NAME']. $path)  return true;
+	return false;
 }
 ?>
