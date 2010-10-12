@@ -12,7 +12,7 @@ function wpm_out41 ($node_id, $html, $css)
 	$process = true;
 	$active = $html['active'];
 	$home = get_bloginfo ('url', 'display');
-	$name = $item->name? __($item->name): wpm_display_name ($item);
+	$name = __(wpm_label ($item));
 	$url = wpm_url ($item, $html['nourl']);
 	$template = wpm_template ($item, $html, $url);
 	$attributes = $item->attributes? __($item->attributes): "";
@@ -66,7 +66,7 @@ function wpm_append_nodes ($id)
 		_wpm_update_links ($item);
 		
 		$node->type = 'Heading';
-		$node->name = wpm_display_name ($item);
+		$node->name = $item->name;
 		wpm_update_node ($item->id, $node);
 
 		$tags = wpm_get_tags ();
@@ -86,7 +86,7 @@ function wpm_append_nodes ($id)
 
 		$node->type = (!$item->selection || 
 			in_array ($item->selection, (array)$item->headings))? 'Heading': 'Category';
-		$node->name = wpm_display_name ($item);
+		$node->name = $item->name;
 		wpm_update_node ($item->id, $node);
 
 		$cats = wpm_get_cats ();
@@ -124,7 +124,7 @@ function wpm_append_nodes ($id)
 
 		$node->type = (!$item->selection || 
 			in_array ($item->selection, (array)$item->headings))? 'Heading': 'Page';
-		$node->name = wpm_display_name ($item);
+		$node->name = $item->name;
 		wpm_update_node ($item->id, $node);
 
 		$pages = wpm_get_pages ();
