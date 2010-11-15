@@ -12,7 +12,7 @@ function wpm_out41 ($node_id, $html, $css)
 	$process = true;
 	$active = $html['active'];
 	$home = get_bloginfo ('url', 'display');
-	$name = $item->name? __($item->name): wpm_display_name ($item);
+	$name = __(wpm_label ($item));
 	$url = wpm_url ($item, $html['nourl']);
 	$template = wpm_template ($item, $html, $url);
 	$attributes = $item->attributes? __($item->attributes): "";
@@ -108,7 +108,7 @@ function wpm_append_nodes ($id)
 					$newparents[] = $cat->term_id;
 					
 					$node->type = in_array ($cat->term_id, (array)$item->headings)? 'Heading': 'Category';
-					$node->name = $cat->name;
+					$node->name = get_cat_name ($cat->term_id);
 					$node->selection = $cat->term_id;
 					
 					$parent = wpm_find_node ($item->id, 'selection', $cat->parent);
@@ -146,7 +146,7 @@ function wpm_append_nodes ($id)
 					$newparents[] = $page->ID;
 					
 					$node->type = in_array ($page->ID, (array)$item->headings)? 'Heading': 'Page';
-					$node->name = $page->post_title;
+					$node->name = get_the_title ($page->ID);
 					$node->selection = $page->ID;
 					
 					$parent = wpm_find_node ($item->id, 'selection', $page->post_parent);

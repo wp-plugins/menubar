@@ -4,7 +4,7 @@
 Plugin Name: Menubar
 Plugin URI: http://www.blogsweek.com/wp-menubar-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 4.8
+Version: 4.10
 Author: Andrea Tarantini
 Author URI: http://www.blogsweek.com/
 */
@@ -42,7 +42,7 @@ $wpm_options->option_name  	= 'menubar';
 $wpm_options->update_option	= true;
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '4.8';
+$wpm_options->wpm_version 	= '4.10';
 
 include_once ('wpm-db.php');
 include_once ('wpm-menu.php');
