@@ -2,7 +2,7 @@
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
 Tested up to: 3.0.1
-Stable tag: 4.9
+Stable tag: 4.10
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -32,6 +32,8 @@ Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPres
 
 == Changelog ==
 
+= 4.10 =
+* Fixed a compatibility bug with the qTranslate plugin
 = 4.9 =
 * Enhanced the PHP item type, so you can dynamically generate both label and link of a menu item
 * Fixed a bug that prevented highlighting in the External and PHP types when a querystring was present

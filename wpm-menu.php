@@ -66,7 +66,7 @@ function wpm_append_nodes ($id)
 		_wpm_update_links ($item);
 		
 		$node->type = 'Heading';
-		$node->name = $item->name;
+		$node->name = wpm_display_name ($item);
 		wpm_update_node ($item->id, $node);
 
 		$tags = wpm_get_tags ();
@@ -86,7 +86,7 @@ function wpm_append_nodes ($id)
 
 		$node->type = (!$item->selection || 
 			in_array ($item->selection, (array)$item->headings))? 'Heading': 'Category';
-		$node->name = $item->name;
+		$node->name = wpm_display_name ($item);
 		wpm_update_node ($item->id, $node);
 
 		$cats = wpm_get_cats ();
@@ -108,7 +108,7 @@ function wpm_append_nodes ($id)
 					$newparents[] = $cat->term_id;
 					
 					$node->type = in_array ($cat->term_id, (array)$item->headings)? 'Heading': 'Category';
-					$node->name = $cat->name;
+					$node->name = get_cat_name ($cat->term_id);
 					$node->selection = $cat->term_id;
 					
 					$parent = wpm_find_node ($item->id, 'selection', $cat->parent);
@@ -124,7 +124,7 @@ function wpm_append_nodes ($id)
 
 		$node->type = (!$item->selection || 
 			in_array ($item->selection, (array)$item->headings))? 'Heading': 'Page';
-		$node->name = $item->name;
+		$node->name = wpm_display_name ($item);
 		wpm_update_node ($item->id, $node);
 
 		$pages = wpm_get_pages ();
@@ -146,7 +146,7 @@ function wpm_append_nodes ($id)
 					$newparents[] = $page->ID;
 					
 					$node->type = in_array ($page->ID, (array)$item->headings)? 'Heading': 'Page';
-					$node->name = $page->post_title;
+					$node->name = get_the_title ($page->ID);
 					$node->selection = $page->ID;
 					
 					$parent = wpm_find_node ($item->id, 'selection', $page->post_parent);
