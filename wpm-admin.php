@@ -480,8 +480,8 @@ $messages[11] = __('Menu added.', 'wpm');
 $messages[12] = __('Error: duplicate or null menu name!', 'wpm');
 $messages[13] = __('Please add your first menu.', 'wpm');
 $messages[14] = __('Error: item has sub-items!', 'wpm');
-$messages[15] = __('Welcome to Menubar!</p><p>To complete your installation, please create the folder <em>wp-content/plugins/menubar-templates</em></p><p>and upload at least one Menubar template (<a href=http://www.dontdream.it/wp-menubar-3-documentation#Menu%20templates>see instructions</a>).', 'wpm');
-$messages[16] = __('No Menubar templates were detected in <em>wp-content/plugins/menubar-templates</em>.</p><p>To complete your installation, please upload at least one Menubar template (<a href=http://www.dontdream.it/wp-menubar-3-documentation#Menu%20templates>see instructions</a>).', 'wpm');
+$messages[15] = __('Menubar templates folder <em>wp-content/plugins/'. MENUBAR_TEMPLATES. '</em> not found.', 'wpm');
+$messages[16] = __('No Menubar templates found in <em>wp-content/plugins/'. MENUBAR_TEMPLATES. '</em>.', 'wpm');
 
 if (!$menuid)  $menuid = wpm_get_default_menu ();
 if (!$menuid)  $msg = 13;
