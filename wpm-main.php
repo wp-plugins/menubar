@@ -4,12 +4,12 @@
 Plugin Name: Menubar
 Plugin URI: http://www.blogsweek.com/wp-menubar-documentation
 Description: Configurable menus with your choice of menu templates.
-Version: 4.10
+Version: 5.0
 Author: Andrea Tarantini
 Author URI: http://www.blogsweek.com/
 */
 
-/*  Copyright 2007-2010 Andrea Tarantini (andrea@blogsweek.com)
+/*  Copyright 2007-2012 Andrea Tarantini (andrea@blogsweek.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,11 +26,17 @@ Author URI: http://www.blogsweek.com/
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+if (!defined ('MENUBAR_TEMPLATES'))
+	if (file_exists (WP_PLUGIN_DIR. '/menubar-templates'))
+		define ('MENUBAR_TEMPLATES', 'menubar-templates');
+	else
+		define ('MENUBAR_TEMPLATES', 'menubar/templates');
+
 global $wpm_options;
 $wpm_options = new stdClass;
 $wpm_options->admin_name	= 'Menubar';
 $wpm_options->menubar		= 'menubar';
-$wpm_options->templates		= 'menubar-templates';
+$wpm_options->templates		= MENUBAR_TEMPLATES;
 $wpm_options->menubar_url	= plugins_url ($wpm_options->menubar);
 $wpm_options->templates_url	= plugins_url ($wpm_options->templates);
 $wpm_options->templates_dir	= WP_PLUGIN_DIR. '/'. $wpm_options->templates;
@@ -42,7 +48,7 @@ $wpm_options->option_name  	= 'menubar';
 $wpm_options->update_option	= true;
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '4.10';
+$wpm_options->wpm_version 	= '5.0';
 
 include_once ('wpm-db.php');
 include_once ('wpm-menu.php');
@@ -58,6 +64,18 @@ function wpm_add_pages ()
 	add_action ("admin_print_scripts-$page", 'wpm_scripts');
 
 	return true;
+}
+
+add_filter ('plugin_action_links_'. plugin_basename (__FILE__), 'wpm_row_meta', 10, 2);
+function wpm_row_meta ($links, $file)
+{
+	global $wpm_options;
+
+	$url = admin_url ('themes.php');
+	$settings_link = '<a href="'. add_query_arg (array ('page' => $wpm_options->admin_file), $url). '">'. __('Settings', 'wpm'). '</a>';
+	array_unshift ($links, $settings_link);
+
+	return $links;
 }
 
 function wpm_css ($template='', $css='')

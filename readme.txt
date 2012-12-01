@@ -1,8 +1,8 @@
 === Menubar ===
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
-Tested up to: 3.0.1
-Stable tag: 4.10
+Tested up to: 3.4.2
+Stable tag: 5.0
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -11,27 +11,23 @@ Single and multi-level menus for your WordPress site, styled with customizable m
 With Menubar you can easily build and manage single and multi-level menus for your WordPress site.
 
 * Build your menus selecting item types among Home, FrontPage, Heading, Tag, TagList, Category, CategoryTree, Page, PageTree, Post, SearchBox, External, PHP, Custom, in any combination
-* Display a menu inserting in your theme, e.g. at the end of *header.php*, the line `<?php do_action ('wp_menubar', 'your_menu_name'); ?>`
-* Use the *Menubar* widget to display your menus in a widget ready area or sidebar (only with WordPress 2.8 or higher)
-* To style your menus, select one of the available Menubar templates, customize your selected template, or use the CSS from your theme
-* Menubar templates are stored in an independent folder, so you can upgrade automatically to a new Menubar version without losing your template customizations
-
-A Menubar live demo is available on the [WP Menubar demo site](http://www.dontdream.it/demo/).
+* Display a menu inserting in your theme, e.g. at the end of *header.php*, the line `<?php do_action ('wp_menubar', 'your_menu_name_here'); ?>`
+* Use the *Menubar* widget to display your menus in a widget ready area or sidebar
+* To style your menus, select one of the default Menubar templates, customize your selected template, or use the CSS from your theme
+* Customized Menubar templates can be moved into an independent folder, so you can upgrade to a new Menubar version without losing your changes
 
 == Installation ==
 
-See the [First installation procedure](http://www.blogsweek.com/wp-menubar-documentation#First%20installation%20procedure) or the [Upgrading procedure](http://www.blogsweek.com/wp-menubar-documentation#Upgrading%20procedure).
+See the full [Menubar 5.0 Documentation](http://www.blogsweek.com/menubar-5-0-documentation).
 
 == Frequently Asked Questions ==
 
-See the [WP Menubar documentation](http://www.blogsweek.com/wp-menubar-documentation).
-
 == Screenshots ==
-
-Visit the [WP Menubar demo site](http://www.dontdream.it/demo/) or the [WordPress Menubar](http://www.blogsweek.com/category/wordpress-menubar) category archive. 
 
 == Changelog ==
 
+= 5.0 =
+* All the default Menubar templates are now included in the plugin folder, so you don't have to download them separately.
 = 4.10 =
 * Fixed a compatibility bug with the qTranslate plugin
 = 4.9 =
