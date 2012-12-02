@@ -1,4 +1,5 @@
 === Menubar ===
+Contributors: dontdream
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 2.6
 Tested up to: 3.4.2
@@ -11,18 +12,19 @@ Single and multi-level menus for your WordPress site, styled with customizable m
 With Menubar you can easily build and manage single and multi-level menus for your WordPress site.
 
 * Build your menus selecting item types among Home, FrontPage, Heading, Tag, TagList, Category, CategoryTree, Page, PageTree, Post, SearchBox, External, PHP, Custom, in any combination
-* Display a menu inserting in your theme, e.g. at the end of *header.php*, the line `<?php do_action ('wp_menubar', 'your_menu_name_here'); ?>`
+
+* Display a menu inserting in your theme, e.g. at the end of *header.php*, the line
+**&lt;?php do_action ('wp_menubar', 'your_menu_name_here'); ?&gt;**
+
 * Use the *Menubar* widget to display your menus in a widget ready area or sidebar
+
 * To style your menus, select one of the default Menubar templates, customize your selected template, or use the CSS from your theme
+
 * Customized Menubar templates can be moved into an independent folder, so you can upgrade to a new Menubar version without losing your changes
 
 == Installation ==
 
 See the full [Menubar 5.0 Documentation](http://www.blogsweek.com/menubar-5-0-documentation).
-
-== Frequently Asked Questions ==
-
-== Screenshots ==
 
 == Changelog ==
 
