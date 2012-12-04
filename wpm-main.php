@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Menubar
-Plugin URI: http://www.blogsweek.com/wp-menubar-documentation
+Plugin URI: http://www.blogsweek.com/menubar-5-0-documentation
 Description: Configurable menus with your choice of menu templates.
 Version: 5.0
 Author: Andrea Tarantini
