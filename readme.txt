@@ -14,7 +14,7 @@ With Menubar you can easily build and manage single and multi-level menus for yo
 * Build your menus selecting item types among Home, FrontPage, Heading, Tag, TagList, Category, CategoryTree, Page, PageTree, Post, SearchBox, External, PHP, Custom, in any combination
 
 * Display a menu inserting in your theme, e.g. at the end of *header.php*, the line
-**&lt;?php do_action ('wp_menubar', 'your_menu_name_here'); ?&gt;**
+<br>**&lt;?php do_action ('wp_menubar', 'your_menu_name_here'); ?&gt;**
 
 * Use the *Menubar* widget to display your menus in a widget ready area or sidebar
 
