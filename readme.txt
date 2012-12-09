@@ -24,7 +24,7 @@ With Menubar you can easily build and manage single and multi-level menus for yo
 
 == Installation ==
 
-See the full [Menubar 5.0 Documentation](http://www.blogsweek.com/menubar-5-0-documentation).
+See the full [Menubar 5.0 Documentation](http://www.dontdream.it/menubar).
 
 == Changelog ==
 
