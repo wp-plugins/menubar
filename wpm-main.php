@@ -2,11 +2,11 @@
 
 /*
 Plugin Name: Menubar
-Plugin URI: http://www.blogsweek.com/menubar-5-0-documentation
+Plugin URI: http://www.dontdream.it/menubar
 Description: Configurable menus with your choice of menu templates.
 Version: 5.0
 Author: Andrea Tarantini
-Author URI: http://www.blogsweek.com/
+Author URI: http://www.dontdream.it/
 */
 
 /*  Copyright 2007-2012 Andrea Tarantini (andrea@blogsweek.com)
