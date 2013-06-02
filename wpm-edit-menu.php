@@ -26,7 +26,7 @@ if ($action == 'editmenu') {
 <table class="editform" width="100%" cellspacing="2" cellpadding="5">
 	<tr>
 		<th scope="row" valign="top">	<label for="name"><?php _e('Name:', 'wpm'); ?></label> </th>
-		<td> <input name="menuname" id="menuname" type="text" value="<?php echo attribute_escape($wpm_menu->name); ?>" size="10" />
+		<td> <input name="menuname" id="menuname" type="text" value="<?php echo esc_attr ($wpm_menu->name); ?>" size="10" />
 		</td>
 	</tr>
 	<tr id="select6" >

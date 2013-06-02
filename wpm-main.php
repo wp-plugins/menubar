@@ -4,12 +4,12 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/menubar
 Description: Configurable menus with your choice of menu templates.
-Version: 5.0
+Version: 5.1
 Author: Andrea Tarantini
 Author URI: http://www.dontdream.it/
 */
 
-/*  Copyright 2007-2012 Andrea Tarantini (andrea@blogsweek.com)
+/*  Copyright 2007-2013 Andrea Tarantini (andrea@dontdream.it)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ $wpm_options->option_name  	= 'menubar';
 $wpm_options->update_option	= true;
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '5.0';
+$wpm_options->wpm_version 	= '5.1';
 
 include_once ('wpm-db.php');
 include_once ('wpm-menu.php');
@@ -59,8 +59,8 @@ function wpm_add_pages ()
 	global $wpm_options;
 
 	$page = add_submenu_page ('themes.php', __('Manage Menubar', 'wpm'),
-		$wpm_options->admin_name, 8, $wpm_options->admin_file);
-		
+		$wpm_options->admin_name, 'manage_options', $wpm_options->admin_file);
+
 	add_action ("admin_print_scripts-$page", 'wpm_scripts');
 
 	return true;
@@ -85,7 +85,8 @@ function wpm_css ($template='', $css='')
 	$rows = wpm_get_templates ();
 	
 	echo "\n<!-- WP Menubar $wpm_options->wpm_version: start CSS -->\n"; 
-	
+//	echo '<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />';
+
 	if ($template) 
 		wpm_include ($template, $css);
 		
@@ -277,5 +278,9 @@ add_action ('init', 'wpm_init');
 add_action ('wp_head', 'wpm_css', 10, 2);
 add_action ('wp_menubar', 'wpm_display', 10, 3);
 
-load_plugin_textdomain ('wpm', 'wp-content/plugins/menubar');
+add_action ('plugins_loaded', 'wpm_translate');
+function wpm_translate ()
+{
+	load_plugin_textdomain ('wpm', false, basename (dirname (__FILE__)));
+}
 ?>

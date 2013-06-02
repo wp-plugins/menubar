@@ -1,9 +1,9 @@
 === Menubar ===
 Contributors: dontdream
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
-Requires at least: 2.6
-Tested up to: 3.4.2
-Stable tag: 5.0
+Requires at least: 3.5
+Tested up to: 3.5.1
+Stable tag: 5.1
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
 
@@ -24,12 +24,14 @@ With Menubar you can easily build and manage single and multi-level menus for yo
 
 == Installation ==
 
-See the full [Menubar 5.0 Documentation](http://www.dontdream.it/menubar).
+See the full [Menubar Documentation](http://www.dontdream.it/menubar).
 
 == Changelog ==
 
+= 5.1 =
+* Fixed two PHP 5.4 Warnings: Creating default object from empty value
 = 5.0 =
-* All the default Menubar templates are now included in the plugin folder, so you don't have to download them separately.
+* All the default Menubar templates are now included in the plugin folder, so you don't have to download them separately
 = 4.10 =
 * Fixed a compatibility bug with the qTranslate plugin
 = 4.9 =

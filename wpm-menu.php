@@ -57,6 +57,7 @@ function wpm_append_nodes ($id)
 	global $wpm_options;
 	
 	$wpm_options->update_option = false;
+	$node = new stdClass;
 
 	$item = wpm_readnode ($id);
 	switch ($item->type) 
