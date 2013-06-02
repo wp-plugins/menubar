@@ -209,7 +209,7 @@ function wpm_multiselect ($label, $name, $list, $selected, $attr='', $comment=''
 
 function wpm_input ($label, $name, $value, $size, $comment='')
 {
-	$value = attribute_escape ($value);
+	$value = esc_attr ($value);
 
 		echo "<tr><th width=\"100px\" scope=\"row\" align=\"left\" valign=\"top\">\n";
 			echo "<label for=\"$name\"> $label </label>\n";

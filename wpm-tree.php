@@ -177,6 +177,7 @@ function _wpm_create_node ($node_values)
 	global $wpm_tree, $wpm_options;
 
 	$id = $wpm_tree->ffree++;
+	$wpm_tree->nodes[$id] = new stdClass;
 	
 	foreach (get_object_vars ($node_values) as $key => $value)
 		$wpm_tree->nodes[$id]->$key = $value;
