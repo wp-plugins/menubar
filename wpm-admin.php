@@ -258,6 +258,7 @@ function wpm_get_fields ()
 {
 	$exclude = array ('_wp_http_referer', '_wpnonce'); 
 	
+	$fields = new stdClass;
 	foreach ($_POST as $key => $value)
 	{
 		if (in_array ($key, $exclude))  continue;
