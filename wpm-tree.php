@@ -32,6 +32,7 @@ function wpm_create_tree ()
 {
 	global $wpm_tree, $wpm_options;
 
+	$wpm_tree = new stdClass;
 	$wpm_tree->version = '1.0';
 	$wpm_tree->ffree = 1;
 	$wpm_tree->nodes = array ();

@@ -4,12 +4,12 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/menubar
 Description: Configurable menus with your choice of menu templates.
-Version: 5.1
+Version: 5.2
 Author: Andrea Tarantini
 Author URI: http://www.dontdream.it/
 */
 
-/*  Copyright 2007-2013 Andrea Tarantini (andrea@dontdream.it)
+/*  Copyright 2007-2014 Andrea Tarantini (andrea@dontdream.it)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ $wpm_options->option_name  	= 'menubar';
 $wpm_options->update_option	= true;
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '5.1';
+$wpm_options->wpm_version 	= '5.2';
 
 include_once ('wpm-db.php');
 include_once ('wpm-menu.php');
