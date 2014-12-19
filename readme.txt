@@ -2,7 +2,7 @@
 Contributors: dontdream
 Tags: menu, menubar, navigation, dropdown, suckerfish, superfish
 Requires at least: 3.5
-Tested up to: 4.0.1
+Tested up to: 4.1
 Stable tag: 5.2
 
 Single and multi-level menus for your WordPress site, styled with customizable menu templates.
