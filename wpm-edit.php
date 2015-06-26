@@ -5,6 +5,7 @@ function wpm_item_form ($action, $menuid, $item=null)
 	global $wpm_options;
 	global $wpm_type_list;
 
+	if (is_null ($item))  $item = wpm_empty_item ();
 	$menu = wpm_read_node ($menuid);
 ?>
 
@@ -99,7 +100,7 @@ if ($action == 'edit') {
 
 <?php wpm_input (__('Name:', 'wpm'), 'name', $item->name, 40, __('(e.g. Home, News)', 'wpm')); ?>
 <?php if ($menu->features['images'] == true)
-		wpm_input (__('Image:', 'wpm'), 'imageurl', $item->imageurl, 50, __('(optional image URL)', 'wpm')); ?>
+		wpm_input (__('Image:', 'wpm'), 'imageurl', isset ($item->imageurl)? $item->imageurl: '', 50, __('(optional image URL)', 'wpm')); ?>
 
 <?php wpm_select (__('Type:', 'wpm'), 'type', $wpm_type_list, $item->type); ?>
 
@@ -224,6 +225,8 @@ function wpm_input ($label, $name, $value, $size, $comment='')
 
 function wpm_typeargs ($type, $item=null)
 {
+	if (is_null ($item))  $item = wpm_empty_item ();
+
 	switch ($type)
 	{
 	case 'Home':
@@ -319,7 +322,8 @@ function wpm_item_list ($item_id, $list, $level)
 function wpm_tag_list ($emptylist)
 {
 	$items = wpm_get_tags();
-	
+
+	$list = array ();
 	foreach ($items as $item)
 		$list[$item->term_id] = $item->name;
 		
@@ -365,4 +369,3 @@ function wpm_page_list ($parent_id, $list, $level)
 		
 	return $list;
 }
-?>

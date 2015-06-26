@@ -14,12 +14,13 @@ function wpm_out41 ($node_id, $html, $css)
 	$home = get_bloginfo ('url', 'display');
 	$name = __(wpm_label ($item));
 	$url = wpm_url ($item, $html['nourl']);
+	$imageurl = isset ($item->imageurl)? $item->imageurl: "";
 	$template = wpm_template ($item, $html, $url);
-	$attributes = $item->attributes? __($item->attributes): "";
+	$attributes = !empty ($item->attributes)? __($item->attributes): "";
 	$selection = $item->selection? __($item->selection): "";
 	$menuclass = $css? substr($css, 0, -4): $item->selection;
-	$class = $item->cssclass? " class=\"$item->cssclass\"": "";
-	$selected = $item->cssclass? " class=\"$item->cssclass $active\"": " class=\"$active\"";
+	$class = !empty ($item->cssclass)? " class=\"$item->cssclass\"": "";
+	$selected = !empty ($item->cssclass)? " class=\"$item->cssclass $active\"": " class=\"$active\"";
 	
 	if ($itemdown['hilight'])  $class = $selected;
 	else if (wpm_hilight ($item))  $class = $selected;
@@ -31,12 +32,12 @@ function wpm_out41 ($node_id, $html, $css)
 		$pattern = array ('%attr', '%class', '%home', '%id', '%imageurl', '%items', 
 			'%menuclass', '%name', '%selection', '%url',
 			'%list', '%submit', '%image');
-		$replacement = array ($attributes, $class, $home, $item->id, $item->imageurl, $items, 
+		$replacement = array ($attributes, $class, $home, $item->id, $imageurl, $items, 
 			$menuclass, $name, $selection, $url);
 
-		$list = $items? str_replace ($pattern, $replacement, $html['list']): '';
-		$submit = $selection? str_replace ($pattern, $replacement, $html['submit']): '';
-		$image = $item->imageurl? str_replace ($pattern, $replacement, $html['image']): '';
+		$list = ($items && isset ($html['list']))? str_replace ($pattern, $replacement, $html['list']): '';
+		$submit = ($selection && isset ($html['submit']))? str_replace ($pattern, $replacement, $html['submit']): '';
+		$image = $imageurl? str_replace ($pattern, $replacement, $html['image']): '';
 		
 		$replacement[] = $list;
 		$replacement[] = $submit;
@@ -92,7 +93,8 @@ function wpm_append_nodes ($id)
 
 		$cats = wpm_get_cats ();
 		$newparents = array ($item->selection);
-		
+
+		$level = 0;
 		while (++$level)
 		{
 			if ($item->depth > 0 && $level > $item->depth)  break;
@@ -131,6 +133,7 @@ function wpm_append_nodes ($id)
 		$pages = wpm_get_pages ();
 		$newparents = array ($item->selection);
 
+		$level = 0;
 		while (++$level)
 		{
 			if ($item->depth > 0 && $level > $item->depth)  break;
@@ -461,4 +464,3 @@ if (window.attachEvent) window.attachEvent("onload", '.$mid.'Hover);
 
 	return array ('output' => $output, 'hilite' => $hilite);
 }
-?>

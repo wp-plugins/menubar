@@ -12,6 +12,7 @@ if ($action == 'editmenu') {
 	$form = '<form name="add" id="add" method="post" action="'. $wpm_options->form_action. '">';
 	$action = 'addmenu';
 	$nonce_action = 'addmenu';
+	$wpm_menu = wpm_empty_item ();
 }
 ?>
 

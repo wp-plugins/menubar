@@ -14,7 +14,7 @@ include_once ('wpm-tree.php');
 function wpm_get_default_menu ()
 {
 	$menus = wpm_get_menus ();
-	return $menus[0]->id;
+	return isset ($menus[0]->id)? $menus[0]->id: 0;
 }
 
 function wpm_list_menu_items ($menuid)
@@ -95,7 +95,7 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 	$down = $next_id? "<a href='$url_down' class='edit' title='".__('move down','wpm')."'>
 				<img src='$url/down.gif' /></a>": "";
 
-	$image = ($menu->features['images'] == true && $item->imageurl)? 
+	$image = ($menu->features['images'] == true && !empty ($item->imageurl))? 
 				"<img src=\"$item->imageurl\" height=\"16\" width=\"16\" />": '';
 	
 	$edit = "<a href='$url_edit' class='edit'>" . __('Edit', 'wpm') . "</a>";
@@ -118,7 +118,7 @@ function wpm_print_tree ($menuid, $item_id, $prev_id, $level, $class)
 		<td>";
 
 	$sel = wpm_display_selection ($item);
-	if ($sel[1])  echo "<strong>{$sel[0]}</strong> {$sel[1]} ";
+	if (isset ($sel[1]))  echo "<strong>{$sel[0]}</strong> {$sel[1]} ";
 
 	echo wpm_display_fields ($item);
 	
