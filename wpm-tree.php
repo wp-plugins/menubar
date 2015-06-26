@@ -24,7 +24,7 @@ function wpm_readnode ($node_id)
 {
 	global $wpm_tree;
 	
-	$node = $wpm_tree->nodes[$node_id];
+	$node = isset ($wpm_tree->nodes[$node_id])? $wpm_tree->nodes[$node_id]: null;
 	return $node;
 }
 
@@ -32,6 +32,7 @@ function wpm_create_tree ()
 {
 	global $wpm_tree, $wpm_options;
 
+	$wpm_tree = new stdClass;
 	$wpm_tree->version = '1.0';
 	$wpm_tree->ffree = 1;
 	$wpm_tree->nodes = array ();
@@ -137,14 +138,14 @@ function wpm_delete_node ($node_id, $safe=true)
 
 	$node = wpm_read_node ($node_id);	
 	if ($safe && $node->down)  return false;
-	
+
 	_wpm_unlink_node ($node_id);
-	
-	$wpm_tree->nodes[$node_id] = null;
-	
+
+	unset ($wpm_tree->nodes[$node_id]);
+
 	if ($wpm_options->update_option)
 		update_option ($wpm_options->option_name, $wpm_tree);
-	
+
 	return true;
 }
 
@@ -302,7 +303,7 @@ function wpm_dump_tree ()
 
 	printf ("<br>\n"); 
 	foreach ((array)$wpm_tree->nodes as $n)
-		if ($n->id)  printf ("%d %s %d %d<br>\n", $n->id, $n->name, $n->side, $n->down); 
+		printf ("%d %s %d %d<br>\n", $n->id, $n->name, $n->side, $n->down); 
 }
 
 function _wpm_cmpid ($a, $b)
@@ -421,5 +422,3 @@ function wpm_update_1to2 ()
 	
 	return true;		
 }
-
-?>

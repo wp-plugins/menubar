@@ -4,12 +4,12 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/menubar
 Description: Configurable menus with your choice of menu templates.
-Version: 5.1
+Version: 5.3
 Author: Andrea Tarantini
 Author URI: http://www.dontdream.it/
 */
 
-/*  Copyright 2007-2013 Andrea Tarantini (andrea@dontdream.it)
+/*  Copyright 2007-2015 Andrea Tarantini (andrea@dontdream.it)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ $wpm_options->option_name  	= 'menubar';
 $wpm_options->update_option	= true;
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '5.1';
+$wpm_options->wpm_version 	= '5.3';
 
 include_once ('wpm-db.php');
 include_once ('wpm-menu.php');
@@ -131,8 +131,8 @@ function wpm_display ($menuname, $template='', $css='')
 
 	$menu = wpm_get_menu ($menuname);
 
-	if ($template == '') $template = $menu->selection;
-	if ($css == '') $css = $menu->cssclass;
+	if ($template == '' && isset ($menu->selection)) $template = $menu->selection;
+	if ($css == '' && isset ($menu->cssclass)) $css = $menu->cssclass;
 
 	$version = $wpm_options->wpm_version;
 	$function = $wpm_options->function_name . $template; 
@@ -270,6 +270,23 @@ function wpm_scripts ()
 {
 }
 
+function wpm_empty_item ()
+{
+	$item = new stdClass;
+	$item->type = null;
+	$item->id = null;
+	$item->name = null;
+	$item->imageurl = null;
+	$item->cssclass = null;
+	$item->attributes = null;
+	$item->selection = null;
+	$item->depth = null;
+	$item->exclude = null;
+	$item->headings = null;
+
+	return $item;
+}
+
 // register_activation_hook (__FILE__, 'wpm_activate');
 add_action ('admin_menu', 'wpm_add_pages');
 add_action ('wp_ajax_menubar', 'wpm_ajax');
@@ -283,4 +300,3 @@ function wpm_translate ()
 {
 	load_plugin_textdomain ('wpm', false, basename (dirname (__FILE__)));
 }
-?>
