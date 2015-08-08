@@ -4,7 +4,7 @@
 Plugin Name: Menubar
 Plugin URI: http://www.dontdream.it/menubar
 Description: Configurable menus with your choice of menu templates.
-Version: 5.3
+Version: 5.4
 Author: Andrea Tarantini
 Author URI: http://www.dontdream.it/
 */
@@ -48,7 +48,7 @@ $wpm_options->option_name  	= 'menubar';
 $wpm_options->update_option	= true;
 $wpm_options->function_name	= 'wpm_display_';
 $wpm_options->menu_type   	= 'Menu';
-$wpm_options->wpm_version 	= '5.3';
+$wpm_options->wpm_version 	= '5.4';
 
 include_once ('wpm-db.php');
 include_once ('wpm-menu.php');
@@ -179,14 +179,12 @@ function wpm_is_descendant ($ancestor)
 	}
 }
 
-if (class_exists ('WP_Widget'))
-{
 class WP_Widget_Menubar extends WP_Widget
 {
-	function WP_Widget_Menubar ()
+	function __construct ()
 	{
 		$widget_ops = array ('description' => __('Select a menu to display', 'wpm'));
-		$this->WP_Widget ('Menubar', 'Menubar', $widget_ops);
+		parent::__construct ('Menubar', 'Menubar', $widget_ops);
 	}
 
 	function widget ($args, $instance)
@@ -230,7 +228,6 @@ add_action ('widgets_init', 'wpm_widget_init');
 function wpm_widget_init ()
 {
 	register_widget ('WP_Widget_Menubar');
-}
 }
 
 function wpm_ajax ()
