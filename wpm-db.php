@@ -147,7 +147,7 @@ function wpm_template ($item, $html, $url)
 	case 'PageTree':		return '';
 
 	case 'Post':			return $html['items'][$item->type];
-	case 'SearchBox':		return $html['items'][$item->type];
+	case 'SearchBox':		return isset ($html['items'][$item->type])? $html['items'][$item->type]: '';
 	case 'External':		return $html['items'][$item->type];
 	case 'PHP':				return $url? $html['items']['External']: '';
 	case 'Custom':			return $item->selection;
@@ -247,8 +247,9 @@ function wpm_display_fields ($item)
 {
 	global $wpm_type_fields, $wpm_field_name, $wpm_field_type;
 
+	$out = '';
 	foreach ($wpm_type_fields[$item->type] as $field)
-	if ($item->$field)
+	if (!empty ($item->$field))
 	{
 		switch ($wpm_field_type[$field])
 		{
@@ -322,7 +323,7 @@ function wpm_this_url ($url)
 {
 	global $wp_rewrite;
 
-	$protocol = ($_SERVER["HTTPS"] == 'on')? 'https': 'http';
+	$protocol = (isset ($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on')? 'https': 'http';
 
 	if ($wp_rewrite->using_permalinks ())
 	{
@@ -337,4 +338,3 @@ function wpm_this_url ($url)
 	if ($url == $protocol. '://'. $_SERVER['SERVER_NAME']. $path)  return true;
 	return false;
 }
-?>
